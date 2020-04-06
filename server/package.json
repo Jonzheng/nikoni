@@ -1,0 +1,25 @@
+{
+  "name": "niko",
+  "version": "1.0.0",
+  "description": "cvm-server",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "Koa",
+    "Node"
+  ],
+  "author": "Jon zheng",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "knex": "^0.20.13",
+    "koa": "^2.3.0",
+    "koa-body": "^2.3.0",
+    "koa-compose": "^4.0.0",
+    "koa-route": "^3.2.0",
+    "koa-router": "^8.0.8",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {}
+}

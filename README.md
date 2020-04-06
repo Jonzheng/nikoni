@@ -1,2 +1,2 @@
 # niko
-cvm-server
+cvm-server-dev
