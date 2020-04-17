@@ -6,7 +6,7 @@ exports = module.exports = {
     console.log('checkAuth:', body)
     if(!authName || !authCode){
       console.log(authName, authCode)
-      return ctx.body = {'code': -1, 'data': '无权限操作'}
+      return ctx.body = {'code': -1, 'data': '无权限访问'}
     }else{
       await next()
     }

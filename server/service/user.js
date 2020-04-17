@@ -1,5 +1,6 @@
 const { mysql } = require('../config/db')
 const conf = require('../config/conf')
+const crypto = require('crypto')
 
 const request = require('../util/request')
 
@@ -8,30 +9,42 @@ exports = module.exports = {
   /**
    * 用户进入小程序时注册
    */
-  resgist: async (ctx) => {
+  regist: async (ctx) => {
     console.log('---',new Date(),'---')
     let body = ctx.request.body
     let userCode = body.userCode
-    userCode = '081Vs2iZ1IXOTU0t0tgZ1WmbiZ1Vs2iP'
     let res = await getOpenid(userCode)
-    console.log(res)
     let openid = res.openid
     openid = openid ? openid : '001'
     await mysql.raw('insert into t_user(openid, c_date) values (?,now())on duplicate key update latest_date = now()', openid);
-    let data = await getUser(openid)
+    let data = await mysql('t_user').select('*').where('openid', openid)
+    ctx.body = data;
+  },
+  getUser: async (ctx) => {
+    let body = ctx.request.body
+    let { openid } = body
+    let data = await mysql('t_user').select('*').where('openid', openid)
     ctx.body = data;
   },
   updateUser: async (ctx) => {
     let body = ctx.request.body
-    let openid = body.openid
-    let nickName = body.nickName
-    let showName = body.showName ? body.showName : ''
-    let avatarUrl = body.avatarUrl
-    let gender = body.gender
+    let { openid, nickName, showName, avatarUrl, gender } = body
+    showName = showName ? showName : ''
     await mysql("t_user").where("openid", openid).update({ nick_name: nickName,show_name: showName, avatar_url: avatarUrl, gender: gender})
-    let data = await getUser(openid)
+    let data = await mysql('t_user').select('*').where('openid', openid)
     ctx.body = data;
   },
+  login: async (ctx) => {
+    let body = ctx.request.body
+    let { authName, authCode } = body
+    if (!authName || !authCode){
+      ctx.body = 1001
+      return
+    }
+    authCode = crypto.createHash('md5').update(authCode).digest('hex')
+    let data = await mysql('t_user').select('*').where('auth_name', authName).andWhere('auth_code', authCode).andWhere('status', 2)
+    ctx.body = data
+  }
 }
 
 
@@ -42,9 +55,5 @@ getOpenid = (userCode) => {
     url: url,
     method: 'get'
   })
-}
-
-getUser = (openid) => {
-  return mysql('t_user').select('*').where('openid', openid)
 }
 
