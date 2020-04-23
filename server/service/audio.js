@@ -10,7 +10,7 @@ exports = module.exports = {
     if (fileId){
       let list = await mysql('t_list').select('*').andWhere('file_id', fileId)
       let audio = await mysql('t_audio').select('*').andWhere('file_id', fileId)
-      data = {"list":list,"audio":audio}
+      data = { list, audio }
     }else{
       let params = {
         Bucket: Bucket,
@@ -34,9 +34,9 @@ exports = module.exports = {
       await list()
       let content = lst["Contents"]
       let audio = await mysql('t_audio').select('*')
-      data = {"content":content, "audio":audio}
+      data = { content, audio }
     }
 
-    ctx.data = data
+    ctx.body = data
   },
 }
