@@ -32,6 +32,7 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
+    https: false,    //是否开启https
     overlay: {
       warnings: false,
       errors: true
@@ -41,9 +42,9 @@ module.exports = {
         target: 'http://127.0.0.1:3000/', // 对应自己的接口
         changeOrigin: true,
         ws: true,
-        pathRewrite: {
-          '^/api': ''
-        }
+        // pathRewrite: {
+        //   '^/api': ''
+        // }
       }
     },
     before: require('./mock/mock-server.js')

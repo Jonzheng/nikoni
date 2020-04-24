@@ -4,6 +4,9 @@ exports = module.exports = {
   queryList: async (ctx) => {
     let body = ctx.request.body
     let { fileId, pageNo, pageSize, title, level } = body
+    title = title ? title : ''
+    pageNo = pageNo ? pageNo : 1
+    pageSize = pageSize ? pageSize : 10
     let list = []
     let total = 0
     if (fileId != undefined){

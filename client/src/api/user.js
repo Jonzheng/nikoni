@@ -25,7 +25,7 @@ export function logout() {
 
 export function hello() {
   return request({
-    url: '/api/',
+    url: '/api/user',
     method: 'get'
   })
 }

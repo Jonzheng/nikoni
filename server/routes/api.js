@@ -16,23 +16,16 @@ const { queryList } = require('../service/list')
 
 
 
-// router.get('/', checkAuth, regist)
+router.get('/', checkAuth, regist)
 
-// router.post('/', login)
-router.get('/', (ctx)=>{
-  let data = {nick_name:'Foo', date: new Date()}
-  ctx.body = data
-})
-router.post('/', (ctx)=>{
-  let data = {nick_name:'Foo', date: new Date()}
-  ctx.body = data
-})
+router.post('/', login)
 router.post('/login', login)
 
 router.post('/queryList', queryList)
+router.get('/queryList', queryList)
 
 router.get('/user', (ctx)=>{
-  let data = {nick_name:'Jon', date: new Date()}
+  let data = {nickname:'Nikoni', date: new Date()}
   ctx.body = data
 })
 router.post('/user', regist)
