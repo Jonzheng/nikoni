@@ -1,9 +1,5 @@
-import request from '@/utils/request'
+import { post } from '@/utils/axios'
 
-export function getList(params) {
-  return request({
-    url: '/vue-admin-template/table/list',
-    method: 'get',
-    params
-  })
+export function getList(data) {
+  return post('/queryList', data)
 }

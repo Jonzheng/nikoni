@@ -2,6 +2,8 @@
   <div class="dashboard-container">
     <div class="dashboard-text">：{{ nickname }}</div>
     <div class="dashboard-text">：{{ date }}</div>
+    <el-input v-model="level" placeholder="level" @input="levelInput" />
+
     <el-button type="primary" @click="yell">测试</el-button>
     <el-button type="primary" @click="getList">查询</el-button>
 
@@ -15,7 +17,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { hello } from '../../api/user'
-import { queryList, postList } from '../../api/list'
+import { queryList } from '../../api/list'
 
 export default {
   name: 'Dashboard',
@@ -29,33 +31,39 @@ export default {
       nickname: 'creeper',
       date: '',
       list: [],
+      level: 'sp',
       total: 0
     }
   },
   methods: {
-    yell(){
-      hello().then((res)=>{
+    levelInput(e) {
+      console.log(e)
+      this.level = e
+    },
+    yell() {
+      hello().then((res) => {
         console.log(res)
         this.nickname = res.nickname
         this.date = res.date
-      }).catch((err)=>{
+      }).catch((err) => {
         console.log(err)
       })
     },
-    getList(){
-      let data = {pageNo: 1, pageSize:20, level: 'n', title: '木'}
+    getList() {
+      const data = { pageNo: 1, pageSize: 3 }
+      data['level'] = this.level
       console.log(data)
-      queryList(data).then((res)=>{
+      queryList(data).then((res) => {
         console.log(res)
         this.list = res.list
         this.total = res.total
-        setTimeout(()=>{
+        setTimeout(() => {
           this.total = 0
         }, 3000)
-      }).catch((e)=>{
+      }).catch((e) => {
         console.log(e)
       })
-    },
+    }
   }
 }
 

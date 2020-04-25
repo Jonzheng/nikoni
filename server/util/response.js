@@ -4,9 +4,11 @@
 module.exports = async (ctx, next) => {
   try {
     const body = ctx.request.body
-    console.log('--response--',new Date(),'--response--')
+    console.log('---request:', new Date())
+    console.log(ctx.request)
+    console.log('--body:')
     console.log(body)
-    console.log('==',new Date(),'==')
+    console.log('===',new Date(),'===')
     await next()
   } catch (e) {
     console.log('Catch Error: %o', e)

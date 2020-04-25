@@ -5,6 +5,7 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
+  // baseURL: '127.0.0.1:3000', // url = base url + request url
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
@@ -17,8 +18,8 @@ service.interceptors.request.use(
     console.log(process.env.VUE_APP_BASE_API)
     if (store.getters.token) {
       config.headers['X-Token'] = getToken()
-      config.headers['Content-Type'] = 'text/plain; charset=UTF-8'
-      // config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+      // config.headers['Content-Type'] = 'text/plain; charset=UTF-8'
+      config.headers['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
       // config.headers['Content-Type'] = 'multipart/form-data; charset=UTF-8'
       // config.headers['Content-Type'] = 'application/json; charset=utf-8'
     }

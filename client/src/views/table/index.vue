@@ -13,19 +13,24 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="Title">
+      <el-table-column label="Title" width="110">
         <template slot-scope="scope">
           {{ scope.row.title }}
         </template>
       </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
+      <el-table-column label="Serifu" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          {{ scope.row.serifu }}
         </template>
       </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
+      <el-table-column label="Koner" align="center">
         <template slot-scope="scope">
-          {{ scope.row.pageviews }}
+          <span>{{ scope.row.koner }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Level" width="110" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.level }}
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="Status" width="110" align="center">
@@ -33,10 +38,10 @@
           <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
+      <el-table-column align="center" prop="created_at" label="Display_time" width="220">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
+          <span>{{ scope.row.c_date }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -59,7 +64,7 @@ export default {
   },
   data() {
     return {
-      list: null,
+      list: [],
       listLoading: true
     }
   },
@@ -69,8 +74,9 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
+      getList().then(resp => {
+        console.log(resp)
+        this.list = resp.list
         this.listLoading = false
       })
     }

@@ -1,6 +1,4 @@
-const router = require('koa-router')({
-  prefix: '/api'
-})
+const router = require('koa-router')()
 const { checkAuth } = require('../util/check')
 const { regist, updateUser, login } = require('../service/user')
 const { updateColor, buyColor } = require('../service/color')
@@ -22,13 +20,18 @@ router.post('/', login)
 router.post('/login', login)
 
 router.post('/queryList', queryList)
+router.post('/api/queryList', queryList)
 router.get('/queryList', queryList)
 
 router.get('/user', (ctx)=>{
-  let data = {nickname:'Nikoni', date: new Date()}
+  let data = {nickname:'get=Nikoni', date: new Date()}
   ctx.body = data
 })
-router.post('/user', regist)
+router.post('/user', (ctx)=>{
+  let data = {nickname:'post=Kona', date: new Date()}
+  ctx.body = data
+})
+// router.post('/user', regist)
 router.put('/user', updateUser)
 
 router.post('/updateColor', updateColor)

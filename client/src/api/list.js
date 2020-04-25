@@ -1,13 +1,17 @@
-import request from '@/utils/request'
-// import qs from 'qs';
+import { get, post } from '@/utils/axios'
+import qs from 'qs';
 
 export function queryList(data) {
-  return request({
-    url: '/api/queryList',
-    method: 'post',
-    // headers: {'Content-Type':'application/json; charset=utf-8'},
-    data
-  })
+  const dd = qs.stringify(data)
+  console.log(dd)
+  const jd = JSON.parse('{"level": "ssr"}')
+  console.log(jd)
+  // return request({
+  //   url: '/queryList',
+  //   method: 'post',
+  //   data: data
+  // })
+  return post('/queryList', data)
 }
 
 export function postList(data) {
@@ -18,11 +22,11 @@ export function postList(data) {
   // });
   // console.log(postData)
 
-  return request({
-    url: '/api/queryList',
-    method: 'post',
-    // headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    // headers: {'Content-Type':'text/plain'},
-    data: data
-  })
+  // return request({
+  //   url: '/api/queryList',
+  //   method: 'post',
+  //   // headers: {'Content-Type':'application/x-www-form-urlencoded'},
+  //   // headers: {'Content-Type':'text/plain'},
+  //   data: data
+  // })
 }
