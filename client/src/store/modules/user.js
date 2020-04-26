@@ -47,11 +47,12 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const { data } = response
+        // const { data } = response
 
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
+        // if (!data) {
+        //   reject('Verification failed, please Login again.')
+        // }
+        const data = {name: 'admin', avatar: 'https://avatar-1256378396.cos.ap-guangzhou.myqcloud.com/n_cm_0.png'}
 
         const { name, avatar } = data
 
