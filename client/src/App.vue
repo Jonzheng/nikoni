@@ -5,12 +5,14 @@
     <div class="footer">
       <div calss="item">Copyright © 2018 - 2020 Nikoni. All Rights Reserved.</div>
       <div class="item">
-        <a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44010602004922" style="display:inline-block;text-decoration:none;height:20px;line-height:20px;">
-        <img src="http://www.gdtv.cn/f/images/beian.png" style="float:left;">粤ICP备18079097号</a>
+        <a target="_blank" href="http://beian.miit.gov.cn/">粤ICP备18079097号</a>
       </div>
+      <!--
       <div class="item">
-        <a href="http://www.miibeian.gov.cn" target="_blank">工信部:粤ICP备18079097号-1</a>
+        <img src="http://www.gdtv.cn/f/images/beian.png">
+        <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=44010602004922" target="_blank">工信部:粤ICP备18079097号-1</a>
       </div>
+      -->
     </div>
   </div>
 </template>
