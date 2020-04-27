@@ -49,7 +49,8 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+// import { getList } from '@/api/table'
+import { queryList } from '../../api/list'
 
 export default {
   filters: {
@@ -65,18 +66,29 @@ export default {
   data() {
     return {
       list: [],
+      level: "sr",
       listLoading: true
     }
   },
   created() {
-    this.fetchData()
+    this.getList()
   },
   methods: {
-    fetchData() {
+    getList() {
       this.listLoading = true
-      getList().then(resp => {
-        console.log(resp)
-        this.list = resp.list
+      const data = { pageNo: 1, pageSize: 50 }
+      data['level'] = this.level
+      console.log(data)
+      queryList(data).then((res) => {
+        console.log(res)
+        this.list = res.list
+        this.total = res.total
+        this.listLoading = false
+        setTimeout(() => {
+          this.total = 0
+        }, 3000)
+      }).catch((e) => {
+        console.log(e)
         this.listLoading = false
       })
     }

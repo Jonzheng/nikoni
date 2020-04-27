@@ -1,7 +1,8 @@
 <template>
   <div class="dashboard-container">
 
-  <h2 id="layout-bu-ju"><a href="#" aria-hidden="true" class="header-anchor">¶</a> Layout 布局</h2>
+  <h2 id="layout-bu-ju">
+<a href="#" aria-hidden="true" class="header-anchor">¶</a> Layout 布局</h2>
   <p>通过基础的 24 分栏，迅速简便地创建布局。</p>
   <p>通过 row 和 col 组件，并通过 col 组件的 <code>span</code> 属性我们就可以自由地组合布局。</p>
     <div class="box">
@@ -35,53 +36,53 @@
       </div>
       </div>
 
-<h2 id="layout-bu-ju"><a href="#" aria-hidden="true" class="header-anchor">¶</a>collapse</h2>
+<h2 id="layout-bu-ju">
+<a href="#" aria-hidden="true" class="header-anchor">¶</a>collapse</h2>
     <div class="box">
 <div class="asset-content entry-content" id="main-content">
 
-                                    <!-- div class="asset-body" -->
-                                        <p>网页布局（layout）是 CSS 的一个重点应用。</p>
+<!-- div class="asset-body" -->
+    <p>网页布局（layout）是 CSS 的一个重点应用。</p>
+<!-- /div -->
 
-                                    <!-- /div -->
+<!-- div id="more" class="asset-more" -->
+    <p><img src="http://www.ruanyifeng.com/blogimg/asset/2015/bg2015071001.gif" alt="" title=""></p>
+
+<p>布局的传统解决方案，基于
+<a href="#" target="">盒状模型</a>，依赖 
 
 
-                                    <!-- div id="more" class="asset-more" -->
-                                        <p><img src="http://www.ruanyifeng.com/blogimg/asset/2015/bg2015071001.gif" alt="" title=""></p>
-
-<p>布局的传统解决方案，基于<a href="https://developer.mozilla.org/en-US/docs/Web/CSS/box_model" target="_blank">盒状模型</a>，依赖 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/display" target="_blank"><code>display</code></a> 属性 + <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/position" target="_blank"><code>position</code></a>属性 + <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/float" target="_blank"><code>float</code></a>属性。它对于那些特殊布局非常不方便，比如，<a href="https://css-tricks.com/centering-css-complete-guide/" target="_blank">垂直居中</a>就不容易实现。</p>
+<a href="#" target=""><code>display</code></a> 属性 + 
+<a href="#" target=""><code>position</code></a>属性 + 
+<a href="#" target=""><code>float</code></a>属性。它对于那些特殊布局非常不方便，比如，
+<a href="#" target="">垂直居中</a>就不容易实现。</p>
 
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2015/bg2015071002.png" alt="" title=""></p>
-
 <p>2009年，W3C 提出了一种新的方案----Flex 布局，可以简便、完整、响应式地实现各种页面布局。目前，它已经得到了所有浏览器的支持，这意味着，现在就能很安全地使用这项功能。</p>
-
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2015/bg2015071003.jpg" alt="" title=""></p>
+<p>Flex 布局将成为未来布局的首选方案。本文介绍它的语法，
+<a href="#" target="">下一篇文章</a>给出常见布局的 Flex 写法。网友 
+<a href="#" target="">JailBreak</a> 为本文的所有示例制作了 
+<a href="#" target="">Demo</a>，也可以参考。</p>
 
-<p>Flex 布局将成为未来布局的首选方案。本文介绍它的语法，<a href="http://www.ruanyifeng.com/blog/2015/07/flex-examples.html" target="_blank">下一篇文章</a>给出常见布局的 Flex 写法。网友 <a href="http://vgee.cn/" target="_blank">JailBreak</a> 为本文的所有示例制作了 <a href="http://static.vgee.cn/static/index.html" target="_blank">Demo</a>，也可以参考。</p>
-
-<p>以下内容主要参考了下面两篇文章：<a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank">A Complete Guide to Flexbox</a> 和 <a href="https://scotch.io/tutorials/a-visual-guide-to-css3-flexbox-properties" target="_blank">A Visual Guide to CSS3 Flexbox Properties</a>。</p>
-
+<p>以下内容主要参考了下面两篇文章：
+<a href="#" target="">A Complete Guide to Flexbox</a> 和 
+<a href="#" target="">A Visual Guide to CSS3 Flexbox Properties</a>。</p>
 <h2>一、Flex 布局是什么？</h2>
-
 <p>Flex 是 Flexible Box 的缩写，意为"弹性布局"，用来为盒状模型提供最大的灵活性。</p>
-
 <p>任何一个容器都可以指定为 Flex 布局。</p>
-
 <blockquote><pre><code class="language-css">
 .box{
   display: flex;
 }
 </code></pre></blockquote>
-
 <p>行内元素也可以使用 Flex 布局。</p>
-
 <blockquote><pre><code class="language-css">
 .box{
   display: inline-flex;
 }
 </code></pre></blockquote>
-
 <p>Webkit 内核的浏览器，必须加上<code>-webkit</code>前缀。</p>
-
 <blockquote><pre><code class="language-css">
 .box{
   display: -webkit-flex; /* Safari */
@@ -90,15 +91,10 @@
 </code></pre></blockquote>
 
 <p>注意，设为 Flex 布局以后，子元素的<code>float</code>、<code>clear</code>和<code>vertical-align</code>属性将失效。</p>
-
 <h2>二、基本概念</h2>
-
 <p>采用 Flex 布局的元素，称为 Flex 容器（flex container），简称"容器"。它的所有子元素自动成为容器成员，称为 Flex 项目（flex item），简称"项目"。</p>
-
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/2015/bg2015071004.png" alt="" title=""></p>
-
 <p>容器默认存在两根轴：水平的主轴（main axis）和垂直的交叉轴（cross axis）。主轴的开始位置（与边框的交叉点）叫做<code>main start</code>，结束位置叫做<code>main end</code>；交叉轴的开始位置叫做<code>cross start</code>，结束位置叫做<code>cross end</code>。</p>
-
 <p>项目默认沿主轴排列。单个项目占据的主轴空间叫做<code>main size</code>，占据的交叉轴空间叫做<code>cross size</code>。</p>
 
 <h2>三、容器的属性</h2>
@@ -347,61 +343,11 @@
 
 <p>（完）</p>
 
-                                    <!-- /div -->
+      <!-- /div -->
 
-                                </div>  
-    </div>
+  </div>  
+</div>
 
-
-  <!-- -->
-    <div class="app-container">
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      element-loading-text="Loading"
-      border
-      fit
-      highlight-current-row
-    >
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.$index }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Title" width="110">
-        <template slot-scope="scope">
-          {{ scope.row.title }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Serifu" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.serifu }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Koner" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.koner }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Level" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.level }}
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="220">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.c_date }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-  </div>
-  <!-- -->
 
   <!--
     <div class="dashboard-text">：{{ nickname }}</div>
@@ -526,7 +472,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
     fetchData() {

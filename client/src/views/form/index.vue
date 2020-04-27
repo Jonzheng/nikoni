@@ -3,9 +3,24 @@
 
   <!---->
 
-<article data-v-7407bc26="" itemscope="itemscope" itemtype="http://schema.org/Article" class="article" data-v-23c7d456=""><meta itemprop="url" content="https://juejin.im/post/5d07cf13f265da1bd522cfb6"><meta itemprop="headline" content="CentOS安装MySQL详解">
-<meta itemprop="keywords" content="MySQL"><meta itemprop="datePublished" content="2019-06-17T17:44:49.635Z">
-<meta itemprop="image" content="https://b-gold-cdn.xitu.io/icon/icon-128.png"><div itemprop="author" itemscope="itemscope" itemtype="http://schema.org/Person"><meta itemprop="name" content="tianranll"><meta itemprop="url" content="https://juejin.im/user/5cdf70bce51d451086151d23"></div><div itemprop="publisher" itemscope="itemscope" itemtype="http://schema.org/Organization"><meta itemprop="name" content="掘金"><div itemprop="logo" itemscope="itemscope" itemtype="https://schema.org/ImageObject"><meta itemprop="url" content="https://b-gold-cdn.xitu.io/icon/icon-white-180.png"><meta itemprop="width" content="180"><meta itemprop="height" content="180"></div></div><div data-v-7407bc26="" class="author-info-block"><a data-v-7407bc26="" href="/user/5cdf70bce51d451086151d23" target="_blank" rel="" class="avatar-link"><div data-v-292b3648="" data-v-11331c20="" data-v-7407bc26="" data-src="https://user-gold-cdn.xitu.io/2019/5/23/16ae4e55897de553?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1" class="lazy avatar avatar loaded" style="background-image: url(&quot;https://user-gold-cdn.xitu.io/2019/5/23/16ae4e55897de553?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1&quot;);"></div></a><div data-v-7407bc26="" class="author-info-box"><a data-v-44e95489="" data-v-7407bc26="" href="/user/5cdf70bce51d451086151d23" target="_blank" rel="" class="username username ellipsis">tianranll<a data-v-00e1e43c="" data-v-44e95489="" href="/book/5c90640c5188252d7941f5bb/section/5c9065385188252da6320022" target="_blank" rel="" class="rank"><img data-v-00e1e43c="" src="https://b-gold-cdn.xitu.io/v3/static/img/lv-2.f597b88.svg" alt="lv-2"></a></a><div data-v-7407bc26="" class="meta-box"><time data-v-7407bc26="" datetime="2019-06-17T17:44:49.635Z" title="Tue Jun 18 2019 01:44:49 GMT+0800 (中国标准时间)" class="time">2019年06月18日</time><span data-v-7407bc26="" class="views-count">阅读 10136</span><!----></div></div><button data-v-fa88a374="" data-v-7407bc26="" class="follow-button follow">关注</button></div><!----><h1 data-v-7407bc26="" class="article-title">CentOS安装MySQL详解</h1><div data-v-7407bc26="" data-id="5d07d191f265da1bb27731bd" itemprop="articleBody" class="article-content"><h2 class="heading" data-id="heading-0">引言</h2>
+<article data-v-7407bc26="" itemscope="itemscope" itemtype="http://schema.org/Article" class="article" data-v-23c7d456="">
+<meta itemprop="url" content="https://juejin.im/post/5d07cf13f265da1bd522cfb6">
+<meta itemprop="headline" content="CentOS安装MySQL详解">
+
+<meta itemprop="keywords" content="MySQL">
+<meta itemprop="datePublished" content="2019-06-17T17:44:49.635Z">
+
+<meta itemprop="image" content="https://b-gold-cdn.xitu.io/icon/icon-128.png"><div itemprop="author" itemscope="itemscope" itemtype="http://schema.org/Person">
+<meta itemprop="name" content="tianranll">
+<meta itemprop="url" content="https://juejin.im/user/5cdf70bce51d451086151d23"></div><div itemprop="publisher" itemscope="itemscope" itemtype="http://schema.org/Organization">
+<meta itemprop="name" content="掘金"><div itemprop="logo" itemscope="itemscope" itemtype="https://schema.org/ImageObject">
+<meta itemprop="url" content="https://b-gold-cdn.xitu.io/icon/icon-white-180.png">
+<meta itemprop="width" content="180">
+<meta itemprop="height" content="180"></div></div><div data-v-7407bc26="" class="author-info-block">
+<a data-v-7407bc26="" href="#" target="" rel="" class="avatar-link"><div data-v-292b3648="" data-v-11331c20="" data-v-7407bc26="" data-src="https://user-gold-cdn.xitu.io/2019/5/23/16ae4e55897de553?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1" class="lazy avatar avatar loaded" style="background-image: url(&quot;https://user-gold-cdn.xitu.io/2019/5/23/16ae4e55897de553?imageView2/1/w/100/h/100/q/85/format/webp/interlace/1&quot;);"></div></a><div data-v-7407bc26="" class="author-info-box">
+
+<a data-v-00e1e43c="" data-v-44e95489="" href="#" target="" rel="" class="rank"><img data-v-00e1e43c="" src="https://b-gold-cdn.xitu.io/v3/static/img/lv-2.f597b88.svg" alt="lv-2"></a></a><div data-v-7407bc26="" class="meta-box"><time data-v-7407bc26="" datetime="2019-06-17T17:44:49.635Z" title="Tue Jun 18 2019 01:44:49 GMT+0800 (中国标准时间)" class="time"></time><span data-v-7407bc26="" class="views-count"></span><!----></div></div>
+</div><!----><h1 data-v-7407bc26="" class="article-title">CentOS安装MySQL详解</h1><div data-v-7407bc26="" data-id="5d07d191f265da1bb27731bd" itemprop="articleBody" class="article-content"><h2 class="heading" data-id="heading-0">引言</h2>
 <p>最近某云搞活动，买了个服务器作为平时学习和测试用，新机器啥也没有，一些常用软件的安装是免不了的，于是乎想着把安装过程都详细记录下来，一是做个备忘，二是给有需要的同学作个参考。</p>
 <p>Linux上安装软件常见的几种方式：</p>
 <ul>
@@ -16,7 +31,8 @@
 </ul>
 <p>以上几种方式便捷性依次增加，但通用性依次下降，比如直接下载压缩包进行解压，这种方式一般需要自己做一些额外的配置工作，但只要掌握了方法，各个平台基本都适用，YUM虽然简单，但是平台受限，网络受限，必要的时候还需要增加一些特定YUM源。</p>
 <p>几种安装方式最好都能掌握，原则上能用简单的就用简单的：YUM&gt;RPM&gt;tar.gz&gt;源码</p>
-<p>本文是介绍MySQL在CentOS上的安装，主要步骤都是参考了MySQL官方文档：<a target="_blank" href="https://dev.mysql.com/doc/refman/5.7/en/installing.html" rel="nofollow noopener noreferrer">dev.mysql.com/doc/refman/…</a></p>
+<p>本文是介绍MySQL在CentOS上的安装，主要步骤都是参考了MySQL官方文档：
+<a target="" href="#" rel="nofollow noopener noreferrer">dev.mysql.com/doc/refman/…</a></p>
 <p>为了测试不同安装方式，反复折腾了好几次，装了删，删了装，每个步骤都是亲测成功的，每条命令都是亲自执行过的，可以放心使用</p>
 <p>咱们闲话少说，书归正传（这闲话就不少了...）</p>
 <h2 class="heading" data-id="heading-1">一、YUM</h2>
@@ -42,12 +58,14 @@ shell&gt; rpm <span class="hljs-_">-e</span> --nodeps mariadb-libs
 <p>从CentOS 7开始，MariaDB成为Yum源中默认的数据库安装包。也就是说在CentOS 7及以上的系统中使用yum安装MySQL默认安装的会是MariaDB（MySQL的一个分支）。如果想安装官方MySQL版本，需要使用MySQL提供的Yum源。</p>
 </blockquote>
 <h5 class="heading" data-id="heading-8">下载MySQL源</h5>
-<p>官网地址：<a target="_blank" href="https://dev.mysql.com/downloads/repo/yum/" rel="nofollow noopener noreferrer">dev.mysql.com/downloads/r…</a></p>
+<p>官网地址：
+<a target="" href="#" rel="nofollow noopener noreferrer">dev.mysql.com/downloads/r…</a></p>
 <p>查看系统版本：</p>
 <pre><code class="hljs bash copyable" lang="bash">shell&gt; cat /etc/redhat-release
 CentOS Linux release 7.6.1810 (Core)
 <span class="copy-code-btn">复制代码</span></code></pre><p>选择对应的版本进行下载，例如CentOS 7当前在官网查看最新Yum源的下载地址为：
-<a target="_blank" href="https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm" rel="nofollow noopener noreferrer">dev.mysql.com/get/mysql80…</a></p>
+
+<a target="" href="#" rel="nofollow noopener noreferrer">dev.mysql.com/get/mysql80…</a></p>
 <pre><code class="hljs bash copyable" lang="bash">shell&gt; wget https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
 <span class="copy-code-btn">复制代码</span></code></pre><h5 class="heading" data-id="heading-9">安装MySQL源</h5>
 <pre><code class="hljs bash copyable" lang="bash">shell&gt; sudo rpm -Uvh platform-and-version-specific-package-name.rpm
@@ -144,7 +162,8 @@ shell&gt; systemctl daemon-reload
 <h3 class="heading" data-id="heading-30">0、删除已旧版本</h3>
 <p>略</p>
 <h3 class="heading" data-id="heading-31">1、下载MySQL安装包</h3>
-<p>下载地址：<a target="_blank" href="https://dev.mysql.com/downloads/mysql/" rel="nofollow noopener noreferrer">dev.mysql.com/downloads/m…</a></p>
+<p>下载地址：
+<a target="" href="#" rel="nofollow noopener noreferrer">dev.mysql.com/downloads/m…</a></p>
 <p>选择对应的版本：
 </p><figure><img class="lazyload inited" data-src="https://user-gold-cdn.xitu.io/2019/6/18/16b66894c80e9b32?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" data-width="1280" data-height="804" src="data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;1280&quot; height=&quot;804&quot;></svg>"><figcaption></figcaption></figure><p></p>
 <pre><code class="hljs bash copyable" lang="bash">shell&gt; wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.26-1.el7.x86_64.rpm-bundle.tar
@@ -182,7 +201,8 @@ shell&gt; rpm -ivh mysql-community-server-5.7.26-1.el7.x86_64.rpm
 <h3 class="heading" data-id="heading-37">0、删除旧版本</h3>
 <p>略</p>
 <h3 class="heading" data-id="heading-38">1、下载</h3>
-<p>下载地址：<a target="_blank" href="https://dev.mysql.com/downloads/mysql/" rel="nofollow noopener noreferrer">dev.mysql.com/downloads/m…</a></p>
+<p>下载地址：
+<a target="" href="#" rel="nofollow noopener noreferrer">dev.mysql.com/downloads/m…</a></p>
 <p>选择对应的版本：
 </p><figure><img class="lazyload inited" data-src="https://user-gold-cdn.xitu.io/2019/6/18/16b668a1b3c258aa?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" data-width="1280" data-height="420" src="data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; version=&quot;1.1&quot; width=&quot;1280&quot; height=&quot;420&quot;></svg>"><figcaption></figcaption></figure><p></p>
 <pre><code class="hljs bash copyable" lang="bash">shell&gt; wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.26-linux-glibc2.12-x86_64.tar.gz
@@ -240,7 +260,7 @@ mysqld         	0:关	1:关	2:开	3:开	4:开	5:开	6:关
 </div></article>
 
 
-  <!---->
+  <!--
     <el-form ref="form" :model="form" label-width="120px">
       <el-form-item label="Activity name">
         <el-input v-model="form.name" />
@@ -285,6 +305,7 @@ mysqld         	0:关	1:关	2:开	3:开	4:开	5:开	6:关
         <el-button @click="onCancel">Cancel</el-button>
       </el-form-item>
     </el-form>
+    -->
   </div>
 </template>
 

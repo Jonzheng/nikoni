@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Nikoni',
+  title: 'IT技术文档数据展示',
 
   /**
    * @type {boolean} true | false
