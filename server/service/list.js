@@ -44,7 +44,7 @@ exports = module.exports = {
       // let nameStr = names.map(item => '\''+item+'\'')
       // let orderStr = names.length>0 ? `FIELD(s_name, ${nameStr})` : '1'
       data = await mysql('t_list').select('*').whereIn('s_name', names) //.orderByRaw(orderStr)
-      res = await mysql.raw('select file_id from t_list WHERE `level` = ? GROUP BY s_name;', [level])
+      res = await mysql.raw('select s_name from t_list WHERE `level` = ? GROUP BY s_name;', [level])
       total = res[0].length
     }
     ctx.body = { data, total, names }
