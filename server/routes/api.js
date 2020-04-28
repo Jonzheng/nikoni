@@ -10,8 +10,7 @@ const { queryRank, checkRank, saveRank } = require('../service/rank')
 
 const { updateRecord } = require('../service/record')
 const { updateZan, cancelZan } = require('../service/zan')
-const { queryList } = require('../service/list')
-
+const { queryList, queryListMerge } = require('../service/list')
 
 
 router.get('/', checkAuth, regist)
@@ -20,6 +19,7 @@ router.post('/', login)
 router.post('/login', login)
 
 router.post('/queryList', queryList)
+router.post('/queryList/merge', queryListMerge)
 router.post('/api/queryList', queryList)
 router.get('/queryList', queryList)
 

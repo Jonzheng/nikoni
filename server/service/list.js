@@ -28,4 +28,25 @@ exports = module.exports = {
     }
     ctx.body = { list, total }
   },
+  queryListMerge: async (ctx) => {
+    let body = ctx.request.body
+    let { pageNo, pageSize, title, level } = body
+    title = title ? title : ''
+    pageNo = pageNo ? pageNo : 1
+    pageSize = pageSize ? pageSize : 10
+    let data = []
+    let total = 0
+    let names = []
+    let offset = (pageNo - 1) * pageSize
+    if (level) {
+      let res = await mysql.raw('select s_name,round(SUM(stars) / count(s_name)) as aver ,count(s_name) as total from `t_list` WHERE `level` = ? GROUP BY s_name ORDER BY aver desc LIMIT ?, ?', [level,offset,pageSize]);
+      names = res[0].map( item => item.s_name)
+      // let nameStr = names.map(item => '\''+item+'\'')
+      // let orderStr = names.length>0 ? `FIELD(s_name, ${nameStr})` : '1'
+      data = await mysql('t_list').select('*').whereIn('s_name', names) //.orderByRaw(orderStr)
+      res = await mysql.raw('select file_id from t_list WHERE `level` = ? GROUP BY s_name;', [level])
+      total = res[0].length
+    }
+    ctx.body = { data, total, names }
+  },
 }
