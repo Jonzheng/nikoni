@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.baseURL = 'https://omoz.club:3000'
+axios.defaults.baseURL = 'http://omoz.club:3000'
 
 export function get(url, params) {
   return new Promise((resolve, reject) => {
