@@ -32,7 +32,7 @@ module.exports = {
   devServer: {
     port: port,
     open: false, // 打开
-    https: false, // 是否开启https
+    https: true, // 是否开启https
     hot: true,
     // headers: { "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8" },
     overlay: { // 启动编译信息

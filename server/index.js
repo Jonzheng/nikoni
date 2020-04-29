@@ -15,5 +15,5 @@ app.use(cors({
 }))
 app.use(router.routes(), router.allowedMethods())
 
-app.listen(conf.port, () => console.log(`listening on port ${conf.port}`))
+app.listen(conf.port, '0.0.0.0', () => console.log(`listening on port ${conf.port}`))
 

@@ -43,7 +43,7 @@ exports = module.exports = {
       names = res[0].map( item => item.s_name)
       // let nameStr = names.map(item => '\''+item+'\'')
       // let orderStr = names.length>0 ? `FIELD(s_name, ${nameStr})` : '1'
-      list = await mysql('t_list').select('*').whereIn('s_name', names) //.orderByRaw(orderStr)
+      list = await mysql('t_list').select('*').whereIn('s_name', names).andWhere('level', level) //.orderByRaw(orderStr)
       res = await mysql.raw('select s_name from t_list WHERE `level` = ? GROUP BY s_name;', [level])
       total = res[0].length
     }
