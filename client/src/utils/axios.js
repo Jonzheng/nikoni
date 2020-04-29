@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.baseURL = 'http://129.204.165.23:3000'
+axios.defaults.baseURL = 'https://omoz.club/api/'
 
 export function get(url, params) {
   return new Promise((resolve, reject) => {
