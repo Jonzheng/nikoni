@@ -28,9 +28,16 @@ exports = module.exports = {
   },
   updateUser: async (ctx) => {
     let body = ctx.request.body
-    let { openid, nickName, showName, avatarUrl, gender } = body
+    let { openid, nickName, showName, avatarUrl, gender, city, province, country } = body
     showName = showName ? showName : ''
-    await mysql("t_user").where("openid", openid).update({ nick_name: nickName,show_name: showName, avatar_url: avatarUrl, gender: gender})
+    await mysql("t_user").where("openid", openid).update({ nick_name: nickName,show_name: showName, avatar_url: avatarUrl, gender: gender, city:city, province:province, country:country})
+    let data = await mysql('t_user').select('*').where('openid', openid)
+    ctx.body = data;
+  },
+  updateAvatar: async (ctx) => {
+    let body = ctx.request.body
+    let { openid, avatarUrl } = body
+    await mysql("t_user").where("openid", openid).update({ avatar_url: avatarUrl })
     let data = await mysql('t_user').select('*').where('openid', openid)
     ctx.body = data;
   },

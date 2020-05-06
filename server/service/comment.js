@@ -5,7 +5,6 @@ exports = module.exports = {
     let body = ctx.request.body
     let { recordId, userId } = body
     let data = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,tz.user_id as zid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) left join t_zan tz on (t_cm.id=tz.comm_id and tz.status=1 and tz.user_id = ?) where t_cm.record_id = ? order by t_cm.c_date desc', [userId, recordId])
-    console.log(data)
     ctx.body = data
   },
   saveComment: async (ctx) => {
