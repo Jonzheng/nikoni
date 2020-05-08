@@ -1,6 +1,18 @@
 const { mysql } = require('../config/db')
 
 exports = module.exports = {
+  saveRecord: async (ctx) => {
+    let body = ctx.request.body
+    let { recordId, fileId, srcRecord, masterId } = body
+    await mysql('t_record').insert({
+      record_id: recordId,
+      file_id: fileId,
+      master_id: masterId,
+      src_record: srcRecord
+    })
+    let data = await mysql('t_record').select('*').where('record_id', recordId)
+    ctx.body = data
+  },
   updateRecord: async (ctx) => {
     let body = ctx.request.body
     let { recordId, status } = body

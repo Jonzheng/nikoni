@@ -8,7 +8,7 @@ const { queryDetail } = require('../service/detail')
 const { updateHeart, cancelHeart } = require('../service/heart')
 const { queryRank, checkRank, saveRank } = require('../service/rank')
 
-const { updateRecord } = require('../service/record')
+const { updateRecord, saveRecord } = require('../service/record')
 const { updateZan, cancelZan } = require('../service/zan')
 const { queryList, queryListMerge } = require('../service/list')
 
@@ -52,7 +52,8 @@ router.post('/queryRank', queryRank)
 router.post('/checkRank', checkRank)
 router.post('/saveRank', saveRank)
 
-router.post('/record', updateRecord)
+router.post('/updateRecord', updateRecord)
+router.post('/saveRecord', saveRecord)
 
 router.post('/updateZan', updateZan)
 router.post('/cancelZan', cancelZan)
