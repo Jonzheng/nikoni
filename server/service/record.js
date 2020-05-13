@@ -6,7 +6,7 @@ exports = module.exports = {
     let { masterId, admin } = body
     let data = []
     if (masterId){
-        let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id where tre.master_id = ?',[masterId])
+        let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id and th.user_id = ? where tre.master_id = ? ORDER BY tre.c_date desc',[masterId,masterId])
         data = res[0]
     }else if(admin == 'admini'){
       let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id')
