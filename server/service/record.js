@@ -6,10 +6,10 @@ exports = module.exports = {
     let { masterId, admin } = body
     let data = []
     if (masterId){
-        let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id and th.user_id = ? where tre.master_id = ? ORDER BY tre.c_date desc',[masterId,masterId])
+        let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id and th.status = 1 and th.user_id = ? where tre.master_id = ? ORDER BY tre.c_date desc',[masterId,masterId])
         data = res[0]
     }else if(admin == 'admini'){
-      let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id')
+      let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id and th.status = 1 and th.user_id = ? ORDER BY tre.c_date desc',[masterId])
       data = res[0]
     }
     ctx.body = data
@@ -43,6 +43,7 @@ exports = module.exports = {
     let body = ctx.request.body
     let { recordId, masterId } = body
     await mysql("t_record").where("record_id", recordId).andWhere('master_id', masterId).delete()
+    await mysql("t_heart").where("record_id", recordId).delete()
     ctx.body = 200
   }
 }
