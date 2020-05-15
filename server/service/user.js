@@ -23,8 +23,8 @@ exports = module.exports = {
   getUser: async (ctx) => {
     let body = ctx.request.body
     let { openid } = body
-    let data = await mysql('t_user').select('*').where('openid', openid)
-    ctx.body = data;
+    let res = await mysql('t_user').select('*').where('openid', openid)
+    ctx.body = res[0];
   },
   updateUser: async (ctx) => {
     let body = ctx.request.body
