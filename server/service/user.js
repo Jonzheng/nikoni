@@ -22,16 +22,17 @@ exports = module.exports = {
   },
   getUser: async (ctx) => {
     let body = ctx.request.body
-    let { openid } = body
+    let { openid, mineId } = body
     let res = await mysql('t_user').select('*').where('openid', openid)
-    let heartCount = await mysql('t_heart').count('master_id').where('master_id', openid).andWhere('status', 1)
+    let heart = await mysql('t_heart').select('user_id').where('master_id', openid).andWhere('status', 1)
     let user = res[0]
     let follow = await mysql('t_follow').select('openid', 'follow_id').where('openid', openid).orWhere('follow_id', openid)
-    let followCount = follow.filter((item) => {return item.follow_id == openid}).length
-    let fansCount = follow.filter((item) => {return item.openid == openid}).length
-    user['followCount'] = followCount
-    user['fansCount'] = fansCount
-    user['heartCount'] = heartCount
+    let follows = follow.filter((item) => {return item.follow_id == openid})
+    let fans = follow.filter((item) => {return item.openid == openid})
+    user['heartCount'] = heart.length
+    user['followCount'] = follows.length
+    user['fansCount'] = fans.length
+    user['isFollow'] = fans.includes(mineId)
     ctx.body = user;
   },
   updateUser: async (ctx) => {
