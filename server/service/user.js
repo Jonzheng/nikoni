@@ -24,7 +24,15 @@ exports = module.exports = {
     let body = ctx.request.body
     let { openid } = body
     let res = await mysql('t_user').select('*').where('openid', openid)
-    ctx.body = res[0];
+    let heartCount = await mysql('t_heart').count('master_id').where('master_id', openid).andWhere('status', 1)
+    let user = res[0]
+    let follow = await mysql('t_follow').select('openid', 'follow_id').where('openid', openid).orWhere('follow_id', openid)
+    let followCount = follow.filter((item) => {return item.follow_id == openid}).length
+    let fansCount = follow.filter((item) => {return item.openid == openid}).length
+    user['followCount'] = followCount
+    user['fansCount'] = fansCount
+    user['heartCount'] = heartCount
+    ctx.body = user;
   },
   updateUser: async (ctx) => {
     let body = ctx.request.body
@@ -75,14 +83,14 @@ exports = module.exports = {
   queryFollow: async (ctx) => {
     let body = ctx.request.body
     let { openid } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tur.openid = ?', openid);
-    ctx.body = data;
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.openid = ?', openid);
+    ctx.body = data[0];
   },
   queryFans: async (ctx) => {
     let body = ctx.request.body
-    let { followId } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tur.follow_id = ?', followId);
-    ctx.body = data;
+    let { openid } = body
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.follow_id = ?', openid);
+    ctx.body = data[0];
   },
 }
 
