@@ -34,6 +34,14 @@ exports = module.exports = {
     let data = await mysql('t_user').select('*').where('openid', openid)
     ctx.body = data;
   },
+  updateProfile: async (ctx) => {
+    let body = ctx.request.body
+    let { openid, showName, motto } = body
+    showName = showName ? showName : ''
+    motto = motto ? motto : ''
+    await mysql("t_user").where("openid", openid).update({ show_name: showName, motto: motto })
+    ctx.body = 200;
+  },
   updateAvatar: async (ctx) => {
     let body = ctx.request.body
     let { openid, avatarUrl } = body
@@ -51,7 +59,31 @@ exports = module.exports = {
     authCode = crypto.createHash('md5').update(authCode).digest('hex')
     let data = await mysql('t_user').select('*').where('auth_name', authName).andWhere('auth_code', authCode).andWhere('status', 2)
     ctx.body = data
-  }
+  },
+  follow: async (ctx) => {
+    let body = ctx.request.body
+    let { openid, followId } = body
+    await mysql.raw('insert into t_follow(openid, follow_id) values (?,?)on duplicate key update c_date = now()', [openid, followId]);
+    ctx.body = 200
+  },
+  unFollow: async (ctx) => {
+    let body = ctx.request.body
+    let { openid, followId } = body
+    await mysql.raw('update t_follow set status = 0 where openid = ? and follow_id = ?', [openid, followId]);
+    ctx.body = 200
+  },
+  queryFollow: async (ctx) => {
+    let body = ctx.request.body
+    let { openid } = body
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tur.openid = ?', openid);
+    ctx.body = data;
+  },
+  queryFans: async (ctx) => {
+    let body = ctx.request.body
+    let { followId } = body
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tur.follow_id = ?', followId);
+    ctx.body = data;
+  },
 }
 
 
