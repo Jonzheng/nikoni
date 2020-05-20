@@ -26,7 +26,7 @@ exports = module.exports = {
     let res = await mysql('t_user').select('*').where('openid', openid)
     let heart = await mysql('t_heart').select('user_id').where('master_id', openid).andWhere('status', 1)
     let user = res[0]
-    let follow = await mysql('t_follow').select('openid', 'follow_id').where('status', 1).andWhere(()=>{this.where('openid', openid).orWhere('follow_id', openid)})
+    let follow = await mysql('t_follow').select('openid', 'follow_id').where('status', 1).andWhere(function(){this.where('openid', openid).orWhere('follow_id', openid)})
     let follows = follow.filter((item) => {return item.openid == openid})
     let fans = follow.filter((item) => {return item.follow_id == openid})
     user['heartCount'] = heart.length
