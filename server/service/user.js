@@ -26,13 +26,13 @@ exports = module.exports = {
     let res = await mysql('t_user').select('*').where('openid', openid)
     let heart = await mysql('t_heart').select('user_id').where('master_id', openid).andWhere('status', 1)
     let user = res[0]
-    let follow = await mysql('t_follow').select('openid', 'follow_id').where('openid', openid).orWhere('follow_id', openid)
-    let follows = follow.filter((item) => {return item.follow_id == openid})
-    let fans = follow.filter((item) => {return item.openid == openid})
+    let follow = await mysql('t_follow').select('openid', 'follow_id').where('status', 1).andWhere(()=>{this.where('openid', openid).orWhere('follow_id', openid)})
+    let follows = follow.filter((item) => {return item.openid == openid})
+    let fans = follow.filter((item) => {return item.follow_id == openid})
     user['heartCount'] = heart.length
     user['followCount'] = follows.length
     user['fansCount'] = fans.length
-    user['isFollow'] = fans.includes(mineId)
+    user['isFollow'] = fans.filter((item) => {return item.openid == mineId}).length > 0
     ctx.body = user;
   },
   updateUser: async (ctx) => {
@@ -69,10 +69,17 @@ exports = module.exports = {
     let data = await mysql('t_user').select('*').where('auth_name', authName).andWhere('auth_code', authCode).andWhere('status', 2)
     ctx.body = data
   },
+  clearNews: async (ctx) => {
+    let body = ctx.request.body
+    let { openid } = body
+    await mysql("t_user").where("openid", openid).update({ news: 0 })
+    ctx.body = 200
+  },
   follow: async (ctx) => {
     let body = ctx.request.body
     let { openid, followId } = body
-    await mysql.raw('insert into t_follow(openid, follow_id) values (?,?)on duplicate key update c_date = now()', [openid, followId]);
+    await mysql.raw('insert into t_follow(openid, follow_id) values (?,?)on duplicate key update status = 1, c_date = now()', [openid, followId]);
+    await mysql("t_user").where("openid", openid).increment({ news: 1 })
     ctx.body = 200
   },
   unFollow: async (ctx) => {
@@ -84,14 +91,34 @@ exports = module.exports = {
   queryFollow: async (ctx) => {
     let body = ctx.request.body
     let { openid } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.openid = ?', openid);
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status = 1 and tf.openid = ?', openid);
     ctx.body = data[0];
   },
   queryFans: async (ctx) => {
     let body = ctx.request.body
     let { openid } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.follow_id = ?', openid);
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status = 1 and tf.follow_id = ?', openid);
     ctx.body = data[0];
+  },
+  queryHeart: async (ctx) => {
+    let body = ctx.request.body
+    let { openid } = body
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,th.c_date from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.status = 1 ORDER BY th.c_date desc', openid);
+    ctx.body = data[0];
+  },
+  
+  // 通知--点赞、评论、关注
+  queryNews: async (ctx) => {
+    let body = ctx.request.body
+    let { openid } = body
+    let resHeart = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,unix_timestamp(th.c_date) as times, th.c_date, 'heart' as type from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.status = 1 and tur.openid != ?`, [openid, openid]);
+    resHeart = resHeart[0]
+    let resComment = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tc.record_id,tc.file_id,tc.content, unix_timestamp(tc.c_date) as times, tc.c_date, 'commemt' as type from t_comment tc LEFT JOIN t_user tur on (tc.user_id = tur.openid) WHERE tc.master_id = ? and tc.status = 1 and tur.openid != ?`, [openid, openid]);
+    resComment = resComment[0]
+    let resFans = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date,unix_timestamp(tf.c_date) as times, 'fans' as type FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status = 1 and tf.follow_id = ?`, openid);
+    resFans = resFans[0]
+    let data = resHeart.concat(resComment).concat(resFans)
+    ctx.body = data;
   },
 }
 
