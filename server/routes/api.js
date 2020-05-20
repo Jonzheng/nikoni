@@ -1,6 +1,6 @@
 const router = require('koa-router')()
 const { checkAuth } = require('../util/check')
-const { regist, login, getUser, updateUser, updateAvatar, updateProfile, follow, unFollow, queryFollow, queryFans } = require('../service/user')
+const { regist, login, getUser, updateUser, updateAvatar, updateProfile, follow, unFollow, queryFollow, queryFans, queryHeart, queryNews, clearNews } = require('../service/user')
 const { updateColor, buyColor } = require('../service/color')
 const { queryComment, saveComment, deleteComment } = require('../service/comment')
 
@@ -26,6 +26,9 @@ router.post('/follow', follow)
 router.post('/unFollow', unFollow)
 router.post('/queryFollow', queryFollow)
 router.post('/queryFans', queryFans)
+router.post('/queryHeart', queryHeart)
+router.post('/queryNews', queryNews)
+router.post('/clearNews', clearNews)
 
 router.post('/queryList', queryList)
 router.post('/queryList/merge', queryListMerge)

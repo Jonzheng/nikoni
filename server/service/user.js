@@ -79,7 +79,7 @@ exports = module.exports = {
     let body = ctx.request.body
     let { openid, followId } = body
     await mysql.raw('insert into t_follow(openid, follow_id) values (?,?)on duplicate key update status = 1, c_date = now()', [openid, followId]);
-    await mysql("t_user").where("openid", openid).increment({ news: 1 })
+    await mysql("t_user").where("openid", followId).increment({ news: 1 })
     ctx.body = 200
   },
   unFollow: async (ctx) => {
