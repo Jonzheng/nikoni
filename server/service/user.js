@@ -108,11 +108,8 @@ exports = module.exports = {
   },
   queryHeart: async (ctx) => {
     let body = ctx.request.body
-    let { openid, pageNo, pageSize } = body
-    pageNo = pageNo ? pageNo : 1
-    pageSize = pageSize ? pageSize : 10
-    let offset = (pageNo - 1) * pageSize
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,th.c_date from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.user_id != ? and th.status = 1 ORDER BY th.c_date desc limit ?,?', [openid, openid, offset, pageSize]);
+    let { openid } = body
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,th.c_date from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.user_id != ? and th.status = 1 ORDER BY th.c_date desc limit 0,30', [openid, openid]);
     ctx.body = data[0];
   },
   
