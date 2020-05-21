@@ -90,20 +90,29 @@ exports = module.exports = {
   },
   queryFollow: async (ctx) => {
     let body = ctx.request.body
-    let { openid } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status = 1 and tf.openid = ?', openid);
+    let { openid, pageNo, pageSize } = body
+    pageNo = pageNo ? pageNo : 1
+    pageSize = pageSize ? pageSize : 10
+    let offset = (pageNo - 1) * pageSize
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status = 1 and tf.openid = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
   },
   queryFans: async (ctx) => {
     let body = ctx.request.body
-    let { openid } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status = 1 and tf.follow_id = ?', openid);
+    let { openid, pageNo, pageSize } = body
+    pageNo = pageNo ? pageNo : 1
+    pageSize = pageSize ? pageSize : 10
+    let offset = (pageNo - 1) * pageSize
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status = 1 and tf.follow_id = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
   },
   queryHeart: async (ctx) => {
     let body = ctx.request.body
-    let { openid } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,th.c_date from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.status = 1 ORDER BY th.c_date desc', openid);
+    let { openid, pageNo, pageSize } = body
+    pageNo = pageNo ? pageNo : 1
+    pageSize = pageSize ? pageSize : 10
+    let offset = (pageNo - 1) * pageSize
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,th.c_date from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.user_id != ? and th.status = 1 ORDER BY th.c_date desc limit ?,?', [openid, openid, offset, pageSize]);
     ctx.body = data[0];
   },
   
@@ -111,13 +120,15 @@ exports = module.exports = {
   queryNews: async (ctx) => {
     let body = ctx.request.body
     let { openid } = body
-    let resHeart = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,unix_timestamp(th.c_date) as times, th.c_date, 'heart' as type from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.status = 1 and tur.openid != ?`, [openid, openid]);
+    let resHeart = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,unix_timestamp(th.c_date) as times, th.c_date, 'heart' as type from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.status = 1 and tur.openid != ? ORDER BY th.c_date desc limit 0,30`, [openid, openid]);
     resHeart = resHeart[0]
-    let resComment = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tc.record_id,tc.file_id,tc.content, unix_timestamp(tc.c_date) as times, tc.c_date, 'commemt' as type from t_comment tc LEFT JOIN t_user tur on (tc.user_id = tur.openid) WHERE tc.master_id = ? and tc.status = 1 and tur.openid != ?`, [openid, openid]);
+    let resComment = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tc.record_id,tc.file_id,tc.content, unix_timestamp(tc.c_date) as times, tc.c_date, 'comment' as type from t_comment tc LEFT JOIN t_user tur on (tc.user_id = tur.openid) WHERE tc.master_id = ? and tc.status = 1 and tur.openid != ? ORDER BY tc.c_date desc limit 0,30`, [openid, openid]);
     resComment = resComment[0]
-    let resFans = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date,unix_timestamp(tf.c_date) as times, 'fans' as type FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status = 1 and tf.follow_id = ?`, openid);
+    let resFans = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date,unix_timestamp(tf.c_date) as times, 'fans' as type FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status = 1 and tf.follow_id = ? ORDER BY tf.c_date desc limit 0,30`, openid);
     resFans = resFans[0]
     let data = resHeart.concat(resComment).concat(resFans)
+    let minIdx = Math.min(30, data.length)
+    data = data.slice(0, minIdx)
     ctx.body = data;
   },
 }
