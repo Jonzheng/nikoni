@@ -83,7 +83,7 @@ exports = module.exports = {
     // 可能互相关注
     let res = await mysql("t_follow").where("openid", followId).andWhere('follow_id', openid).update({ status: 2 })
     if (res){
-      await mysql("t_follow").where("openid", openid).andWhere('follow_id', follow_id).update({ status: 2 })
+      await mysql("t_follow").where("openid", openid).andWhere('follow_id', followId).update({ status: 2 })
     }
     ctx.body = res
   },
@@ -95,7 +95,7 @@ exports = module.exports = {
     // 更新互相关注的状态
     let res = await mysql("t_follow").where("openid", followId).andWhere('follow_id', openid).andWhere('status', 2).update({ status: 1 })
     if (res){
-      await mysql("t_follow").where("openid", openid).andWhere('follow_id', follow_id).update({ status: 2 })
+      await mysql("t_follow").where("openid", openid).andWhere('follow_id', followId).update({ status: 2 })
     }
     ctx.body = res
   },
