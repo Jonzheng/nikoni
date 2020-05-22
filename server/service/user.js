@@ -26,7 +26,7 @@ exports = module.exports = {
     let res = await mysql('t_user').select('*').where('openid', openid)
     let heart = await mysql('t_heart').select('user_id').where('master_id', openid).andWhere('status', 1)
     let user = res[0]
-    let follow = await mysql('t_follow').select('openid', 'follow_id').where('status', 1).andWhere(function(){this.where('openid', openid).orWhere('follow_id', openid)})
+    let follow = await mysql('t_follow').select('openid', 'follow_id').whereNot('status', 0).andWhere(function(){this.where('openid', openid).orWhere('follow_id', openid)})
     let follows = follow.filter((item) => {return item.openid == openid})
     let fans = follow.filter((item) => {return item.follow_id == openid})
     user['heartCount'] = heart.length
@@ -105,7 +105,7 @@ exports = module.exports = {
     pageNo = pageNo ? pageNo : 1
     pageSize = pageSize ? pageSize : 10
     let offset = (pageNo - 1) * pageSize
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.status,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status = 1 and tf.openid = ? limit ?,?', [openid, offset, pageSize]);
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.status,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status != 0 and tf.openid = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
   },
   queryFans: async (ctx) => {
@@ -114,7 +114,7 @@ exports = module.exports = {
     pageNo = pageNo ? pageNo : 1
     pageSize = pageSize ? pageSize : 10
     let offset = (pageNo - 1) * pageSize
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.status,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status = 1 and tf.follow_id = ? limit ?,?', [openid, offset, pageSize]);
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.status,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status != 0 and tf.follow_id = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
   },
   queryHeart: async (ctx) => {
