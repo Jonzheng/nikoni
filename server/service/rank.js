@@ -3,12 +3,16 @@ const { mysql } = require('../config/db')
 exports = module.exports = {
   queryRank: async (ctx) => {
     let body = ctx.request.body
-    let openid = body.openid
+    let { openid, pageNo, pageSize } = body
+    pageNo = pageNo ? pageNo : 1
+    pageSize = pageSize ? pageSize : 10
+    let offset = (pageNo - 1) * pageSize
     let data = []
     if (openid){
         data = await mysql('t_link_rank').select('*').where('openid', openid)
+        data = data[0]
     }else{
-        data = await mysql('t_link_rank').select('*').where('round','>', 0).orderBy('total_coin', 'desc').leftJoin('t_user', 't_link_rank.openid', 't_user.openid')
+        data = await mysql('t_link_rank').select('*').where('round','>', 0).orderBy('total_coin', 'desc').leftJoin('t_user', 't_link_rank.openid', 't_user.openid').limit(10).offset(offset)
     }
     ctx.body = data
   },
@@ -16,29 +20,29 @@ exports = module.exports = {
     let body = ctx.request.body
     let { openid, checkCoin, ran } = body
     let oldCoin = 0
-    let result = []
+    let res = []
     if (openid){
       await mysql.raw('update t_link_rank set latest=now() where openid = ?', [openid]);
       if (checkCoin > 0){ //签到
         await mysql.raw('update t_link_rank set check_coin=check_coin+?,total_coin=total_coin+?,ran=?, s_date=now() where openid = ?', [checkCoin,checkCoin,ran, openid]);
       }
 
-      result = await mysql('t_link_rank').select('*').where('openid', openid)
-      if (result.length == 1){
-        let rank = result[0]
-        oldCoin = rank.checkCoin
+      res = await mysql('t_link_rank').select('*').where('openid', openid)
+      if (res.length == 1){
+        let rank = res[0]
+        oldCoin = rank.check_coin
         if (oldCoin > 0){
           await mysql.raw('update t_link_rank set coin = coin+?,check_coin=0 where openid = ?', [oldCoin, openid]);
-          result = await mysql('t_link_rank').select('*').where('openid', openid)
+          res = await mysql('t_link_rank').select('*').where('openid', openid)
         }
-        result[0]["oldCoin"] = oldCoin
-      }else if(result.length == 0){
+        res[0]["oldCoin"] = oldCoin
+      }else if(res.length == 0){
         await mysql.raw('insert t_link_rank (openid,point,s_date) values(?,?,date_sub(now(), interval -1 day))', [openid, 0])
-        result = await mysql('t_link_rank').select('*').where('openid', openid)
-        result[0]["oldCoin"] = oldCoin
+        res = await mysql('t_link_rank').select('*').where('openid', openid)
+        res[0]["oldCoin"] = oldCoin
       }
     }
-    ctx.body = result
+    ctx.body = res
   },
   saveRank: async (ctx) => {
     let body = ctx.request.body
