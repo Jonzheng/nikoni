@@ -81,22 +81,18 @@ exports = module.exports = {
     await mysql.raw('insert into t_follow(openid, follow_id) values (?,?)on duplicate key update status = 1, c_date = now()', [openid, followId]);
     await mysql("t_user").where("openid", followId).increment({ news: 1 })
     // 可能互相关注
-    let res = await mysql("t_follow").where("openid", followId).andWhere('follow_id', openid).update({ status: 2 })
+    let res = await mysql("t_follow").where("openid", followId).andWhere('follow_id', openid).andWhere('status', 1).update({ both: 1 })
     if (res){
-      await mysql("t_follow").where("openid", openid).andWhere('follow_id', followId).update({ status: 2 })
+      await mysql("t_follow").where("openid", openid).andWhere('follow_id', followId).update({ both: 1 })
     }
     ctx.body = res
   },
   unFollow: async (ctx) => {
     let body = ctx.request.body
     let { openid, followId } = body
-    await mysql.raw('update t_follow set status = 0 where openid = ? and follow_id = ?', [openid, followId]);
-
+    await mysql("t_follow").where("openid", openid).andWhere('follow_id', followId).update({ status: 0, both: 0 })
     // 更新互相关注的状态
-    let res = await mysql("t_follow").where("openid", followId).andWhere('follow_id', openid).andWhere('status', 2).update({ status: 1 })
-    if (res){
-      await mysql("t_follow").where("openid", openid).andWhere('follow_id', followId).update({ status: 2 })
-    }
+    let res = await mysql("t_follow").where("openid", followId).andWhere('follow_id', openid).update({ both: 0 })
     ctx.body = res
   },
   queryFollow: async (ctx) => {
@@ -105,7 +101,7 @@ exports = module.exports = {
     pageNo = pageNo ? pageNo : 1
     pageSize = pageSize ? pageSize : 10
     let offset = (pageNo - 1) * pageSize
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.status,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status != 0 and tf.openid = ? limit ?,?', [openid, offset, pageSize]);
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.both,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status != 0 and tf.openid = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
   },
   queryFans: async (ctx) => {
@@ -114,7 +110,7 @@ exports = module.exports = {
     pageNo = pageNo ? pageNo : 1
     pageSize = pageSize ? pageSize : 10
     let offset = (pageNo - 1) * pageSize
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.status,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status != 0 and tf.follow_id = ? limit ?,?', [openid, offset, pageSize]);
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.both,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status != 0 and tf.follow_id = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
   },
   queryHeart: async (ctx) => {
