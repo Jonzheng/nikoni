@@ -7,12 +7,16 @@ exports = module.exports = {
     pageNo = pageNo ? pageNo : 1
     pageSize = pageSize ? pageSize : 10
     let offset = (pageNo - 1) * pageSize
-    let data = []
+    let data = {}
     if (openid){
-        data = await mysql('t_link_rank').select('*').where('openid', openid)
-        data = data[0]
+      data = await mysql('t_link_rank').select('*').where('openid', openid)
+      data = data[0]
     }else{
-        data = await mysql('t_link_rank').select('*').where('round','>', 0).orderBy('total_coin', 'desc').leftJoin('t_user', 't_link_rank.openid', 't_user.openid').limit(10).offset(offset)
+      let ranks = await mysql('t_link_rank').select('*').where('round','>', 0).orderBy('total_coin', 'desc').leftJoin('t_user', 't_link_rank.openid', 't_user.openid').limit(pageSize).offset(offset)
+      let res = await mysql('t_link_rank').count('file_id as total').where('round','>', 0)
+      let total = res[0]
+      data['ranks'] = ranks
+      data['total'] = total
     }
     ctx.body = data
   },
