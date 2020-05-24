@@ -13,7 +13,7 @@ exports = module.exports = {
       data = data[0]
     }else{
       let ranks = await mysql('t_link_rank').select('*').where('round','>', 0).orderBy('total_coin', 'desc').leftJoin('t_user', 't_link_rank.openid', 't_user.openid').limit(pageSize).offset(offset)
-      let res = await mysql('t_link_rank').count('file_id as total').where('round','>', 0)
+      let res = await mysql('t_link_rank').count('openid as total').where('round','>', 0)
       let total = res[0]
       data['ranks'] = ranks
       data['total'] = total
