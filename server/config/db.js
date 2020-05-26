@@ -9,7 +9,7 @@ const mysql = require('knex')({
       port: 3306,
       user: 'root',
       password:'root.2233',
-      database: 'omoz'
+      database: 'niko'
     },
     acquireConnectionTimeout: 10000
   })
