@@ -1,4 +1,5 @@
 const { mysql } = require('../config/db')
+const { cos } = require('../util/qcos')
 const Bucket = 'audio-1256378396'
 const Region = 'ap-guangzhou'
 
