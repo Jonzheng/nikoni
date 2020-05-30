@@ -51,7 +51,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '前端css常用布局', icon: 'dashboard' }
+      meta: { title: '式神台词', icon: 'dashboard' }
     }]
   },
 
@@ -96,10 +96,28 @@ export const constantRoutes = [
     redirect: '/nested/menu1',
     name: 'Nested',
     meta: {
-      title: 'Nested',
+      title: '收藏文章',
       icon: 'nested'
     },
     children: [
+      {
+        path: 'article1',
+        component: () => import('@/views/nested/article1/index'),
+        name: 'Article1',
+        meta: { title: 'Python数据类型' }
+      },
+      {
+        path: 'article2',
+        component: () => import('@/views/nested/article2/index'),
+        name: 'Article2',
+        meta: { title: 'Mysql安装步骤' }
+      },
+      {
+        path: 'article3',
+        component: () => import('@/views/nested/article3/index'),
+        name: 'Article3',
+        meta: { title: '网页布局Flex' }
+      },
       {
         path: 'menu1',
         component: () => import('@/views/nested/menu1/index'), // Parent router-view
@@ -140,11 +158,6 @@ export const constantRoutes = [
           }
         ]
       },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'Python数据类型' }
-      }
     ]
   },
 
