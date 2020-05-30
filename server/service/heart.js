@@ -4,7 +4,7 @@ exports = module.exports = {
   updateHeart: async (ctx) => {
     let body = ctx.request.body
     let { recordId, userId, fileId, masterId } = body
-    let count = await mysql("t_record").where("record_id", recordId).andWhere("user_id", userId).count('record_id')
+    let count = await mysql("t_heart").where("record_id", recordId).andWhere("user_id", userId).count('record_id')
     // console.log(res)
     // let res = await mysql.raw('insert t_heart (record_id,user_id,file_id,master_id) values(?,?,?,?)on duplicate key update status = 1', [recordId, userId, fileId, masterId])
     console.log("==========res=====")
