@@ -14,7 +14,9 @@ exports = module.exports = {
   cancelHeart: async (ctx) => {
     let body = ctx.request.body
     let { recordId, userId } = body
-    await mysql.raw('update t_heart set status = 0 where record_id = ? and user_id = ?', [recordId, userId]);
+    let res = await mysql("t_record").where("record_id", recordId).andWhere("user_id", userId).andWhere("status", 1).update({ status: 0 })
+    console.log('res==================')
+    console.log(res)
     await mysql("t_record").where("record_id", recordId).decrement({ heart: 1 })
     ctx.body = 200
   },
