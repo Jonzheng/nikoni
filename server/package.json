@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "cos-nodejs-sdk-v5": "^2.5.20",
     "knex": "^0.21.0",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
