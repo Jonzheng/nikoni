@@ -1,13 +1,11 @@
 const { mysql } = require('../config/db')
-const { cos } = require('../util/qcos')
+const cos = require('../util/qcos')
 
 const BucketAudio = 'audio-1256378396'
 const BucketVideo = 'video-1256378396'
 const Region = 'ap-guangzhou'
 const PreAudio = 'https://audio-1256378396.cos.ap-guangzhou.myqcloud.com/'
-const SufAudio = '.mp3'
 const PreVideo = 'https://video-1256378396.cos.ap-guangzhou.myqcloud.com/'
-const SufVideo = '.mp4'
 const PreImage = 'https://image-1256378396.cos.ap-guangzhou.myqcloud.com/'
 const PreAvatar = 'https://avatar-sk-1256378396.cos.ap-nanjing.myqcloud.com/'
 
@@ -15,7 +13,7 @@ exports = module.exports = {
   queryAudio: async (ctx) => {
     let body = ctx.request.body
     let fileId = body.fileId
-    let data = []
+    let data = {}
     if (fileId) {
       let list = await mysql('t_list').select('*').andWhere('file_id', fileId)
       let audio = await mysql('t_audio').select('*').andWhere('file_id', fileId)
@@ -26,24 +24,27 @@ exports = module.exports = {
         Region: Region
       }
       let lst = []
-      function list() {
+      function getList() {
         return new Promise((resolve) => {
-          cos.getBucket(params, function (err, data) {
+          cos.getBucket(params, (err, res) => {
             if (err) {
               console.log(err)
             } else {
-              console.log(data)
-              lst = data
+              lst = res
             }
-            resolve()
+            resolve(res)
           })
         })
       }
 
-      await list()
-      let content = lst["Contents"]
-      let audio = await mysql('t_audio').select('*')
-      data = { content, audio }
+      let res = await getList()
+      console.log('------------res----')
+      console.log(res)
+      let fileIds = lst["Contents"].map(item => { return item.Key.split('.')[0] })
+      let audio = await mysql('t_audio').select('file_id')
+      console.log(audio)
+      fileIds = fileIds.filter(item => !audio.includes(item))
+      data = { fileIds }
     }
 
     ctx.body = data
