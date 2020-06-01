@@ -9,6 +9,22 @@ const PreVideo = 'https://video-1256378396.cos.ap-guangzhou.myqcloud.com/'
 const PreImage = 'https://image-1256378396.cos.ap-guangzhou.myqcloud.com/'
 const PreAvatar = 'https://avatar-sk-1256378396.cos.ap-nanjing.myqcloud.com/'
 
+const getAudioList = () => {
+  return new Promise((resolve, reject) => {
+    cos.getBucket({
+      Bucket: BucketAudio,
+      Region: Region
+    }, (err, res) => {
+      if (err) {
+        console.log(err)
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}
+
 exports = module.exports = {
   queryAudio: async (ctx) => {
     let body = ctx.request.body
@@ -19,28 +35,8 @@ exports = module.exports = {
       let audio = await mysql('t_audio').select('*').andWhere('file_id', fileId)
       data = { list, audio }
     } else {
-      let params = {
-        Bucket: BucketAudio,
-        Region: Region
-      }
-      let lst = []
-      function getList() {
-        return new Promise((resolve) => {
-          cos.getBucket(params, (err, res) => {
-            if (err) {
-              console.log(err)
-            } else {
-              lst = res
-            }
-            resolve(res)
-          })
-        })
-      }
-
-      let res = await getList()
-      console.log('------------res----')
-      console.log(res)
-      let fileIds = lst["Contents"].map(item => { return item.Key.split('.')[0] })
+      let res = await getAudioList()
+      let fileIds = res["Contents"].map(item => { return item.Key.split('.')[0] })
       let audio = await (await mysql('t_audio').select('file_id')).map(item =>{ return item.file_id })
       console.log(audio)
       fileIds = fileIds.filter(item => !audio.includes(item))
