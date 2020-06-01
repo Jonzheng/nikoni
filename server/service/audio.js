@@ -41,7 +41,7 @@ exports = module.exports = {
       console.log('------------res----')
       console.log(res)
       let fileIds = lst["Contents"].map(item => { return item.Key.split('.')[0] })
-      let audio = await mysql('t_audio').select('file_id')
+      let audio = await (await mysql('t_audio').select('file_id')).map(item =>{ return item.file_id })
       console.log(audio)
       fileIds = fileIds.filter(item => !audio.includes(item))
       data = { fileIds }
