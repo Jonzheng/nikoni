@@ -25,6 +25,24 @@ const getAudioList = () => {
   })
 }
 
+const getVideoSize = (fileId) => {
+  return new Promise((resolve, reject) => {
+    cos.getBucket({
+      Bucket: BucketVideo,
+      Region: Region,
+      Prefix: fileId
+    }, (err, data) => {
+      if (err) {
+        console.log(err)
+        reject(err)
+      } else if(data["Contents"].length > 0) {
+        let videoSize = data["Contents"][0].Size
+        resolve(videoSize)
+      }
+    })
+  })
+}
+
 exports = module.exports = {
   queryAudio: async (ctx) => {
     let body = ctx.request.body
@@ -38,7 +56,6 @@ exports = module.exports = {
       let res = await getAudioList()
       let fileIds = res["Contents"].map(item => { return item.Key.split('.')[0] })
       let audio = await (await mysql('t_audio').select('file_id')).map(item =>{ return item.file_id })
-      console.log(audio)
       fileIds = fileIds.filter(item => !audio.includes(item))
       data = { fileIds }
     }
@@ -61,32 +78,13 @@ exports = module.exports = {
     let srcAudio = `${PreAudio}${fileId}.mp3`
     let srcVideo = `${PreVideo}${fileId}.mp4`
 
-    //获得视频文件大小
-    let paramsGet = {
-      Bucket: BucketVideo,
-      Region: Region,
-      Prefix: fileId
-    }
-    let videoSize = 0
-    function getVideoSize(paramsGet) {
-      return new Promise((resolve, reject) => {
-        cos.getBucket(paramsGet, function (err, data) {
-          if (err) {
-            console.log(err)
-          } else {
-            if (data["Contents"].length > 0) videoSize = data["Contents"][0].Size
-          }
-          resolve()
-        })
-      })
-    }
-    await getVideoSize(paramsGet)
-    //await 在async修饰的函数下,必须是Promise才有效果
+    let videoSize = await getVideoSize(fileId)
 
     await mysql('t_list').insert({
       file_id: fileId,
       src_video: srcVideo,
       video_size: videoSize,
+      s_name: sName,
       title: title,
       serifu: serifu,
       stars: stars,
@@ -95,7 +93,7 @@ exports = module.exports = {
       src_image: srcImage,
       level: level,
       cate: cate,
-      status: 3
+      status: 0
     })
 
     await mysql('t_audio').insert({
@@ -110,7 +108,7 @@ exports = module.exports = {
       ski: ski,
       ver: ver,
       cate: cate,
-      status: 3
+      status: 0
     })
     ctx.body = body
   }
