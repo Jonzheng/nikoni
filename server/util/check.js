@@ -1,4 +1,5 @@
 const { mysql } = require('../config/db')
+const conf = require('../config/conf')
 const request = require('../util/request')
 
 const getToken = () => {
