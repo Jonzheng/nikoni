@@ -43,7 +43,7 @@ exports = module.exports = {
     } else {
       res = await getToken()
       console.log(res)
-      if (res.errcode == 0){
+      if (res && res.access_token){
         token = res.access_token
         await mysql("t_auth").update({ code: token }).where('id', 201)
       }
