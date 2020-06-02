@@ -21,7 +21,7 @@ router.post('/login', login)
 router.post('/getUser', getUser)
 router.post('/updateUser', updateUser)
 router.post('/updateAvatar', updateAvatar)
-router.post('/updateProfile', updateProfile)
+router.post('/updateProfile', checkContent, updateProfile)
 
 router.post('/follow', follow)
 router.post('/unFollow', unFollow)

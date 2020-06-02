@@ -46,12 +46,13 @@ const getVideoSize = (fileId) => {
 exports = module.exports = {
   queryAudio: async (ctx) => {
     let body = ctx.request.body
-    let fileId = body.fileId
+    let { fileId, pageNo, pageSize } = body
     let data = {}
-    if (fileId) {
-      let list = await mysql('t_list').select('*').andWhere('file_id', fileId)
-      let audio = await mysql('t_audio').select('*').andWhere('file_id', fileId)
-      data = { list, audio }
+    if (pageNo && pageSize) {
+      let offset = (pageNo - 1) * pageSize
+      data = await mysql('t_list').select('*').leftJoin('t_audio', 't_list.file_id', 't_audio.file_id').limit(pageSize).offset(offset)
+    } else if(fileId) {
+      data = await mysql('t_list').select('*').leftJoin('t_audio', 't_list.file_id', 't_audio.file_id').where('t_list.file_id', fileId)
     } else {
       let res = await getAudioList()
       let fileIds = res["Contents"].map(item => { return item.Key.split('.')[0] })
@@ -59,7 +60,6 @@ exports = module.exports = {
       fileIds = fileIds.filter(item => !audio.includes(item))
       data = { fileIds }
     }
-
     ctx.body = data
   },
   publishAudio: async (ctx) => {
