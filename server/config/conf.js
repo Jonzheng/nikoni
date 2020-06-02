@@ -7,6 +7,7 @@ module.exports = {
     region: 'ap-guangzhou',
 
     loginApi: `https://api.weixin.qq.com/sns/jscode2session?appid=${appId}&secret=${appSecret}&grant_type=authorization_code&js_code=`,
+    tokenApi = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`,
     
     cos: {
         region: 'ap-guangzhou',
