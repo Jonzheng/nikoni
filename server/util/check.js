@@ -32,6 +32,7 @@ exports = module.exports = {
     }
   },
   checkContent: async (ctx, next) => {
+    let body = ctx.request.body
     let { content } = body
     let res = await mysql('t_auth').select('code').where('id', 201)
     let token = ''
