@@ -1,5 +1,5 @@
 const router = require('koa-router')()
-const { checkAuth } = require('../util/check')
+const { checkAuth, checkContent } = require('../util/check')
 const { regist, login, getUser, updateUser, updateAvatar, updateProfile, follow, unFollow, queryFollow, queryFans, queryHeart, queryNews, clearNews } = require('../service/user')
 const { updateColor, buyColor } = require('../service/color')
 const { queryComment, saveComment, deleteComment } = require('../service/comment')
@@ -11,6 +11,7 @@ const { queryRank, checkRank, saveRank } = require('../service/rank')
 const { updateRecord, saveRecord, queryRecord, deleteRecord } = require('../service/record')
 const { updateZan, cancelZan } = require('../service/zan')
 const { queryList, queryListMerge } = require('../service/list')
+const { queryAudio, publishAudio } = require('../service/audio')
 
 
 router.get('/', checkAuth, regist)
@@ -20,7 +21,7 @@ router.post('/login', login)
 router.post('/getUser', getUser)
 router.post('/updateUser', updateUser)
 router.post('/updateAvatar', updateAvatar)
-router.post('/updateProfile', updateProfile)
+router.post('/updateProfile', checkContent, updateProfile)
 
 router.post('/follow', follow)
 router.post('/unFollow', unFollow)
@@ -50,7 +51,7 @@ router.post('/updateColor', updateColor)
 router.post('/buyColor', buyColor)
 
 router.post('/queryComment', queryComment)
-router.post('/saveComment', saveComment)
+router.post('/saveComment', checkContent, saveComment)
 router.post('/deleteComment', deleteComment)
 
 router.post('/queryDetail', queryDetail)
@@ -69,6 +70,9 @@ router.post('/deleteRecord', deleteRecord)
 
 router.post('/updateZan', updateZan)
 router.post('/cancelZan', cancelZan)
+
+router.post('/queryAudio', queryAudio)
+router.post('/publishAudio', publishAudio)
 
 
 module.exports = router

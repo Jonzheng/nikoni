@@ -4,6 +4,14 @@ const crypto = require('crypto')
 
 const request = require('../util/request')
 
+const getOpenid = (userCode) => {
+  // url = 'https://job.xiyanghui.com/api/q1/json'
+  let url = conf.loginApi + userCode
+  return request({
+    url: url,
+    method: 'get'
+  })
+}
 
 exports = module.exports = {
   /**
@@ -66,8 +74,11 @@ exports = module.exports = {
       return
     }
     authCode = crypto.createHash('md5').update(authCode).digest('hex')
-    let data = await mysql('t_user').select('*').where('auth_name', authName).andWhere('auth_code', authCode).andWhere('status', 2)
-    ctx.body = data
+    let user = await mysql('t_user').select('nick_name', 'show_name', 'avatar_url').where('auth_name', authName).andWhere('auth_code', authCode).andWhere('status', 2)
+    let token = crypto.createHash('md5').update(`${authName}_${authCode}`).digest('hex')
+    await mysql("t_auth").where("auth_name", authName).update({ code: token })
+    user['token'] = token
+    ctx.body = user
   },
   clearNews: async (ctx) => {
     let body = ctx.request.body
@@ -136,14 +147,3 @@ exports = module.exports = {
     ctx.body = data;
   },
 }
-
-
-getOpenid = (userCode) => {
-  // url = 'https://job.xiyanghui.com/api/q1/json'
-  url = conf.loginApi + userCode
-  return request({
-    url: url,
-    method: 'get'
-  })
-}
-

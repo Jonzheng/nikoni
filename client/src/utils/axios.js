@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.baseURL = 'https://omoz.club/api/'
+axios.defaults.baseURL = 'https://nikoni.fun/dev/'
 
 export function get(url, params) {
   return new Promise((resolve, reject) => {
