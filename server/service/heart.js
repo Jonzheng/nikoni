@@ -7,7 +7,7 @@ exports = module.exports = {
     let res = await mysql("t_heart").select('record_id').where("record_id", recordId).andWhere("user_id", userId)
     let count = 0
     if (res.length == 1){
-      count = await mysql("t_heart").where("record_id", recordId).andWhere("user_id", userId).andWhere("status", 0).update({ status: 1})
+      count = await mysql("t_heart").where("record_id", recordId).andWhere("user_id", userId).andWhere("status", 0).update({ status: 1, c_date: 'now()'})
     }else{
       await mysql('t_heart').insert({'record_id':recordId, 'user_id':userId, 'file_id':fileId, 'master_id':masterId})
       count = 1
