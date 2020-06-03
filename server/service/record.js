@@ -27,7 +27,7 @@ exports = module.exports = {
       src_record: srcRecord
     })
     let data = await mysql('t_record').select('*').where('record_id', recordId)
-    await mysql("t_follow").where("openid", masterId).orWhere("follow_id", masterId).increment({ news: 1 })
+    // await mysql("t_follow").where("openid", masterId).orWhere("follow_id", masterId).increment({ news: 1 })
     ctx.body = data
   },
   updateRecord: async (ctx) => {
