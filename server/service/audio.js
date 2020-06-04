@@ -73,8 +73,8 @@ exports = module.exports = {
     let ver = flst[3]
     let cate = "y"
 
-    let avatar = `${PreAvatar}_${level}_${sName}.png`
-    let srcImage = `${PreImage}_${level}_${sName}_0.png`
+    let avatar = `${PreAvatar}${level}_${sName}.png`
+    let srcImage = `${PreImage}${level}_${sName}_0.png`
     let srcAudio = `${PreAudio}${fileId}.mp3`
     let srcVideo = `${PreVideo}${fileId}.mp4`
 
@@ -93,7 +93,7 @@ exports = module.exports = {
       src_image: srcImage,
       level: level,
       cate: cate,
-      status: 0
+      status: 1
     })
 
     await mysql('t_audio').insert({
@@ -108,7 +108,7 @@ exports = module.exports = {
       ski: ski,
       ver: ver,
       cate: cate,
-      status: 0
+      status: 1
     })
     ctx.body = body
   }

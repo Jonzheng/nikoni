@@ -1,8 +1,9 @@
 <template>
   <div class="dashboard-container">
     <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" style="width: 100%">
-      <el-table-column label="Date" prop="date" />
-      <el-table-column label="Name" prop="name" />
+      <el-table-column label="fileId" prop="fileId" />
+      <el-table-column label="level" prop="level" />
+      <el-table-column label="sName" prop="sName" />
       <el-table-column align="right">
         <template slot="header">
           <el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
@@ -28,7 +29,7 @@
     </div>
     -->
     <!-- Form -->
-    <el-dialog title="发布" :visible.sync="dialogFormVisible">
+    <el-dialog :title="editTitle" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="title" :label-width="formLabelWidth">
           <el-input v-model="form.title" autocomplete="off" />
@@ -40,7 +41,7 @@
           <el-input v-model="form.koner" autocomplete="off" />
         </el-form-item>
         <el-form-item label="roma" :label-width="formLabelWidth">
-          <el-input v-model="form.roma" autocomplete="off" />
+          <el-input v-model="form.roma" autocomplete="off" @input="toLower()" />
         </el-form-item>
         <el-form-item label="cv" :label-width="formLabelWidth">
           <el-input v-model="form.cv" autocomplete="off" />
@@ -74,7 +75,9 @@
 import { mapGetters } from 'vuex'
 import { hello } from '../../api/user'
 import { queryList } from '../../api/list'
-import { publishAudio } from '../../api/audio'
+import { queryAudio, publishAudio } from '../../api/audio'
+
+const PreAudio = 'https://audio-1256378396.cos.ap-guangzhou.myqcloud.com/'
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 const context = new AudioContext();
@@ -122,23 +125,8 @@ export default {
   },
   data: function() {
     return {
-      tableData: [{
-        date: '2020-05-02',
-        name: '康纳酱',
-        address: '底特律的汉克家'
-      }, {
-        date: '2020-05-04',
-        name: '马库斯',
-        address: '底特律的汉克家'
-      }, {
-        date: '2020-05-01',
-        name: '罗拉',
-        address: '底特律的汉克家'
-      }, {
-        date: '2020-05-03',
-        name: '汉克',
-        address: '底特律的汉克家'
-      }],
+      tableData: [],
+      editTitle: '',
       file: 'https://audio-1256378396.cos.ap-guangzhou.myqcloud.com/ssr_gq_0_3.mp3',
       search: '',
       list: [],
@@ -157,27 +145,40 @@ export default {
         roma: '',
         cv: '',
         stars: 10,
-        shadow: '',
-        desc: ''
+        shadow: ''
       },
       formLabelWidth: '120px'
     }
   },
   computed: {
+    getLower: {
+      get: function() {
+        return this.form.roma;
+      },
+      set: function(val) {
+        this.form.roma = val.toUpperCase();
+      }
+    },
     ...mapGetters([
       'name'
     ])
   },
   created() {
-    // this.getList()
+    this.fetchData()
   },
   methods: {
+    toLower() {
+      this.form.roma = this.form.roma.toLowerCase()
+    },
     handleEdit(index, row) {
       this.dialogFormVisible = true
-      console.log(index, row);
+      var { fileId } = row
+      this.form.fileId = fileId
+      this.editTitle = fileId
       var request = new XMLHttpRequest();
-      var url = this.file
-      request.open('GET', url, true);
+      var srcAudio = `${PreAudio}${fileId}.mp3`
+      console.log(srcAudio)
+      request.open('GET', srcAudio, true);
       // request.setRequestHeader('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
       // request.setRequestHeader('Content-Type','audio/mp3')
       request.responseType = 'arraybuffer';
@@ -228,11 +229,18 @@ export default {
     },
     fetchData() {
       this.listLoading = true
-      // getList().then(resp => {
-      //   console.log(resp)
-      //   this.list = resp.list
-      //   this.listLoading = false
-      // })
+      queryAudio().then(resp => {
+        const tableData = []
+        const fileIds = resp.fileIds
+        for (const fileId of fileIds) {
+          const level = fileId.split('_')[0]
+          const sName = fileId.split('_')[1]
+          const item = { fileId, level, sName }
+          tableData.push(item)
+        }
+        this.tableData = tableData
+        this.listLoading = false
+      })
     },
     levelInput(e) {
       console.log(e)
