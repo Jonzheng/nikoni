@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <router-view />
-    <app-footer />
     <div class="footer">
       <div calss="item">Copyright © 2018 - 2020 Nikoni. All Rights Reserved.</div>
       <div class="item">
