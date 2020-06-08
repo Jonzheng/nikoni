@@ -11,7 +11,7 @@ const { queryRank, checkRank, saveRank } = require('../service/rank')
 const { updateRecord, saveRecord, queryRecord, deleteRecord } = require('../service/record')
 const { updateZan, cancelZan } = require('../service/zan')
 const { queryList, queryListMerge } = require('../service/list')
-const { queryAudio, publishAudio } = require('../service/audio')
+const { queryAudio, publishAudio, queryDict, saveDict } = require('../service/audio')
 
 
 router.get('/', checkAuth, regist)
@@ -73,6 +73,8 @@ router.post('/cancelZan', cancelZan)
 
 router.post('/queryAudio', queryAudio)
 router.post('/publishAudio', publishAudio)
+router.post('/queryDict', queryDict)
+router.post('/saveDict', saveDict)
 
 
 module.exports = router

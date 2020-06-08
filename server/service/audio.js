@@ -111,5 +111,18 @@ exports = module.exports = {
       status: 1
     })
     ctx.body = body
+  },
+  queryDict: async (ctx) => {
+    let data = await mysql('t_dict').select('*')
+    ctx.body = data
+  },
+  saveDict: async (ctx) => {
+    let body = ctx.request.body
+    let { kk, vv } = body
+    let res = await mysql('t_dict').insert({
+      kk: kk,
+      vv: vv,
+    })
+    ctx.body = res
   }
 }
