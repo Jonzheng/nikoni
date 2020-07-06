@@ -48,7 +48,7 @@
           <el-input v-model="vv" autocomplete="off" @input="toSaveDict(vv)" @focus="selectAll($event)"/>
         </el-form-item>
         <el-form-item label="title" :label-width="formLabelWidth">
-          <el-input v-model="form.title" autocomplete="off" @change="autoTitle(form.title, 0)" />
+          <el-input v-model="form.title" autocomplete="off" @change="autoTitle(form.title, 0)" @focus="selectAll($event)"/>
         </el-form-item>
         <el-form-item label="serifu" :label-width="formLabelWidth">
           <el-input v-model="form.serifu" autocomplete="off" @input="autoMap()" @change="autoSplit(form.serifu, 0)" />
@@ -60,7 +60,7 @@
           <el-input v-model="form.roma" autocomplete="off" @input="toLower()" @focus="selectAll($event)" />
         </el-form-item>
         <el-form-item label="cv" :label-width="formLabelWidth">
-          <el-input v-model="form.cv" autocomplete="off" @change="autoTitle(form.cv, 1)" />
+          <el-input v-model="form.cv" autocomplete="off" @change="autoTitle(form.cv, 1)" @focus="selectAll($event)"/>
         </el-form-item>
         <el-form-item label="shadow" :label-width="formLabelWidth">
           <el-input v-model="form.shadow" autocomplete="off" disabled />
@@ -214,7 +214,7 @@ export default {
       console.log(val, idx)
       let sp = val.split('/')
       if(idx == 1){
-        this.form.koner = sp[1]
+        this.form.koner = sp.length > 1 ? sp[1] : val
       }else{
         this.form.serifu = sp[0]
       }
@@ -223,6 +223,7 @@ export default {
       console.log(val, idx)
       val = val.replace('CV：', '')
       let sp = val.split(' ')
+      console.log(sp)
       if (sp.length != 2) return
       if(idx == 1){
         this.form.cv = sp[1]
