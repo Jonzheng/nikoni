@@ -87,7 +87,7 @@ exports = module.exports = {
 
     // let ss = mysql.raw('insert t_link_rank (openid,point,puz,check_coin,status,latest) values(?,?,?,?,?,now())on duplicate key update point=?,puz=?,check_coin=check_coin+?,round=round+1,status=?,latest=now()', [openid,point,puz,checkCoin,status, point,puz,checkCoin,status]).toString()
     
-    await mysql.raw('insert t_link_rank (openid,point,spend,puz,check_coin,status,s_date,latest) values(?,?,?,?,?,date_sub(now(), interval -1 day),now())on duplicate key update point=?,spend=?,puz=?,check_coin=check_coin+?,total_coin=total_coin+?,round=round+1,status=?,latest=now()', [openid,point,spend,puz,checkCoin,status,point,spend,puz,checkCoin,checkCoin,status])
+    await mysql.raw('insert t_link_rank (openid,point,spend,puz,check_coin,status,s_date,latest) values(?,?,?,?,?,?,date_sub(now(), interval -1 day),now())on duplicate key update point=?,spend=?,puz=?,check_coin=check_coin+?,total_coin=total_coin+?,round=round+1,status=?,latest=now()', [openid,point,spend,puz,checkCoin,status,point,spend,puz,checkCoin,checkCoin,status])
     let data = await mysql('t_link_rank').select('*').where('round', '>', 0)
     ctx.body = data
   },
