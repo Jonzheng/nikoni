@@ -37,6 +37,8 @@ exports = module.exports = {
     let follow = await mysql('t_follow').select('openid', 'follow_id').whereNot('status', 0).andWhere(function(){this.where('openid', openid).orWhere('follow_id', openid)})
     let follows = follow.filter((item) => {return item.openid == openid})
     let fans = follow.filter((item) => {return item.follow_id == openid})
+
+    user['heartUv'] = [...new Set(heart.map(it=>it.user_id))].length
     user['heartCount'] = heart.length
     user['followCount'] = follows.length
     user['fansCount'] = fans.length
@@ -110,7 +112,7 @@ exports = module.exports = {
     let body = ctx.request.body
     let { openid, pageNo, pageSize } = body
     pageNo = pageNo ? pageNo : 1
-    pageSize = pageSize ? pageSize : 10
+    pageSize = pageSize ? pageSize : 60
     let offset = (pageNo - 1) * pageSize
     let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.both,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.follow_id = tur.openid) where tf.status != 0 and tf.openid = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
@@ -119,15 +121,18 @@ exports = module.exports = {
     let body = ctx.request.body
     let { openid, pageNo, pageSize } = body
     pageNo = pageNo ? pageNo : 1
-    pageSize = pageSize ? pageSize : 10
+    pageSize = pageSize ? pageSize : 60
     let offset = (pageNo - 1) * pageSize
     let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.both,tf.news,tf.c_date FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status != 0 and tf.follow_id = ? limit ?,?', [openid, offset, pageSize]);
     ctx.body = data[0];
   },
   queryHeart: async (ctx) => {
     let body = ctx.request.body
-    let { openid } = body
-    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,th.c_date from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.user_id != ? and th.status = 1 ORDER BY th.c_date desc limit 0,30', [openid, openid]);
+    let { openid, pageNo, pageSize } = body
+    pageNo = pageNo ? pageNo : 1
+    pageSize = pageSize ? pageSize : 60
+    let offset = (pageNo - 1) * pageSize
+    let data = await mysql.raw('select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,th.record_id,th.file_id,th.c_date from t_heart th LEFT JOIN t_user tur on (th.user_id = tur.openid) WHERE th.master_id = ? and th.user_id != ? and th.status = 1 ORDER BY th.c_date desc limit ?,?', [openid, openid, offset, pageSize]);
     ctx.body = data[0];
   },
   
