@@ -1,3 +1,6 @@
 node_modules/
 package-lock.json
 util/qcos.js
+config/db.js
+config/conf.js
+
