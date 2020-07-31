@@ -58,7 +58,7 @@ exports = module.exports = {
       let res = await mysql('t_record').count('record_id as total').where('status','>', 0)
       let total = res[0]['total']
       data['total'] = total
-      let res = await mysql.raw('select th.user_id heart_ud,t_re.*, tli.serifu, tli.title,t_ur.nick_name,t_ur.show_name,t_ur.avatar_url,t_ur.openid,t_ur.cv from t_record t_re LEFT JOIN t_list tli on t_re.file_id = tli.file_id inner join t_user t_ur on (t_re.master_id = t_ur.openid) left join t_heart th on (th.record_id = t_re.record_id and th.status = 1 and th.user_id = ?) where t_re.status = 1 order by t_re.c_date desc', [openid])
+      res = await mysql.raw('select th.user_id heart_ud,t_re.*, tli.serifu, tli.title,t_ur.nick_name,t_ur.show_name,t_ur.avatar_url,t_ur.openid,t_ur.cv from t_record t_re LEFT JOIN t_list tli on t_re.file_id = tli.file_id inner join t_user t_ur on (t_re.master_id = t_ur.openid) left join t_heart th on (th.record_id = t_re.record_id and th.status = 1 and th.user_id = ?) where t_re.status = 1 order by t_re.c_date desc', [openid])
       let allRecords = sortRecords(res[0])
       data['records'] = allRecords.slice(idx, idx + pageSize)
       let avatars = []
