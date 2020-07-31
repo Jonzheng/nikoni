@@ -33,16 +33,18 @@ exports = module.exports = {
     }else if(fileId && openid){ // 详情页
       let res = await mysql.raw('select th.user_id heart_ud,t_re.*,t_ur.nick_name,t_ur.show_name,t_ur.avatar_url,t_ur.openid from t_record t_re inner join t_user t_ur on (t_re.master_id = t_ur.openid) left join t_heart th on (th.record_id = t_re.record_id and th.status = 1 and th.user_id = ?) where t_re.file_id = ? and t_re.status = 1 order by t_re.c_date desc', [openid, fileId])
       data = res[0]
-    }if (openid && recordIds){ // 单点更新
+    }else if (openid && recordIds){ // 单点更新
       let reds = recordIds.split(',')
-      let res = await mysql('t_record').column('t_record.*', 't_list.serifu', 't_list.title','t_heart.user_id as heart_ud','t_user.nick_name','t_user.show_name','t_user.avatar_url','t_user.openid','t_user.cv').select().leftJoin('t_list', 't_list.file_id', 't_record.file_id').innerJoin('t_user', 't_user.openid', 't_record.master_id').leftJoin('t_heart', function() {
-        this.on('t_heart.record_id', '=', 't_record.record_id').andOn('t_heart.status', '=', 1).andOn('t_heart.user_id', '=', openid)
-      }).where('t_record.status', 1).andWhereIn('t_record.record_id', reds).orderBy('t_record.c_date', 'desc')
+      let res = await mysql('t_record').select('*').whereIn('t_record.record_id', reds)
+      let heart = await mysql('t_heart').select('*').whereIn('t_heart.record_id', reds).andWhere('status', 1).andWhere('user_id', openid)
+      for (let val of res){
+        val.heart_ud = heart.filter(it=>it.record_id == val.record_id).length == 1
+      }
       data = res
     } else if(openid){ // 查询全部-以后再分页-小程序
       data = {}
       pageNo = pageNo ? pageNo : 1
-      pageSize = pageSize ? pageSize : 30
+      pageSize = pageSize ? pageSize : 20
       let idx = (pageNo - 1) * pageSize
       // let records = await cache.get('records')
       // let reCount = await cache.get('reCount') || 0
@@ -53,6 +55,9 @@ exports = module.exports = {
       // } else {
       // }
       // await cache.set('records', res[0])
+      let res = await mysql('t_record').count('record_id as total').where('status','>', 0)
+      let total = res[0]['total']
+      data['total'] = total
       let res = await mysql.raw('select th.user_id heart_ud,t_re.*, tli.serifu, tli.title,t_ur.nick_name,t_ur.show_name,t_ur.avatar_url,t_ur.openid,t_ur.cv from t_record t_re LEFT JOIN t_list tli on t_re.file_id = tli.file_id inner join t_user t_ur on (t_re.master_id = t_ur.openid) left join t_heart th on (th.record_id = t_re.record_id and th.status = 1 and th.user_id = ?) where t_re.status = 1 order by t_re.c_date desc', [openid])
       let allRecords = sortRecords(res[0])
       data['records'] = allRecords.slice(idx, idx + pageSize)
