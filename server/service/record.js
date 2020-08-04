@@ -25,11 +25,25 @@ const sortRecords = (recordes, pageSize = 30) =>{
 exports = module.exports = {
   queryRecord: async (ctx) => {
     let body = ctx.request.body
-    let { masterId, admin, openid, fileId, pageNo, pageSize, recordIds } = body
+    let { masterId, admin, openid, fileId, pageNo, pageSize, recordIds, mine } = body
     let data = []
     if (masterId && openid){ // 个人页、他人页
-        let res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id and th.status = 1 and th.user_id = ? where tre.master_id = ? ORDER BY tre.status desc,tre.c_date desc',[openid,masterId])
-        data = res[0]
+      data = {}
+      pageNo = pageNo ? pageNo : 1
+      pageSize = pageSize ? pageSize : 20
+      let offset = (pageNo - 1) * pageSize
+      let res = {}
+      if (mine == 1){
+        res = await mysql('t_record').count('record_id as total').where('master_id', masterId)
+      } else {
+        res = await mysql('t_record').count('record_id as total').where('master_id', masterId).andWhere('status', 1)
+      }
+      let total = res[0]['total']
+      data['total'] = total
+
+      res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id and th.status = 1 and th.user_id = ? where tre.master_id = ? ORDER BY tre.status desc,tre.c_date desc limit ?,?',[openid, masterId, offset, pageSize])
+      data['records'] = res[0]
+
     }else if(fileId && openid){ // 详情页
       let res = await mysql.raw('select th.user_id heart_ud,t_re.*,t_ur.nick_name,t_ur.show_name,t_ur.avatar_url,t_ur.openid,t_ur.cv from t_record t_re inner join t_user t_ur on (t_re.master_id = t_ur.openid) left join t_heart th on (th.record_id = t_re.record_id and th.status = 1 and th.user_id = ?) where t_re.file_id = ? and t_re.status = 1 order by t_re.c_date desc', [openid, fileId])
       data = res[0]
