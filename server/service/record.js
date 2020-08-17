@@ -42,7 +42,14 @@ exports = module.exports = {
       data['total'] = total
 
       res = await mysql.raw('select th.user_id heart_ud, tre.*, tli.serifu, tli.title from t_record tre LEFT JOIN t_list tli on tre.file_id = tli.file_id LEFT JOIN t_heart th on tre.record_id = th.record_id and th.status = 1 and th.user_id = ? where tre.master_id = ? ORDER BY tre.status desc,tre.c_date desc limit ?,?',[openid, masterId, offset, pageSize])
-      data['records'] = res[0]
+      let records = res[0]
+      for (let red of records){
+        if (red.comm > 0) {
+          let commKey = `comm_${red.id}`
+          red.comments = JSON.parse(await cache.get(commKey))
+        }
+      }
+      data['records'] = records
 
     }else if(fileId && openid){ // 详情页
       let res = await mysql.raw('select th.user_id heart_ud,t_re.*,t_ur.nick_name,t_ur.show_name,t_ur.avatar_url,t_ur.openid,t_ur.cv from t_record t_re inner join t_user t_ur on (t_re.master_id = t_ur.openid) left join t_heart th on (th.record_id = t_re.record_id and th.status = 1 and th.user_id = ?) where t_re.file_id = ? and t_re.status = 1 order by t_re.c_date desc', [openid, fileId])
@@ -74,7 +81,14 @@ exports = module.exports = {
       data['total'] = total
       res = await mysql.raw('select th.user_id heart_ud,t_re.*, tli.serifu, tli.title,t_ur.nick_name,t_ur.show_name,t_ur.avatar_url,t_ur.openid,t_ur.cv from t_record t_re LEFT JOIN t_list tli on t_re.file_id = tli.file_id inner join t_user t_ur on (t_re.master_id = t_ur.openid) left join t_heart th on (th.record_id = t_re.record_id and th.status = 1 and th.user_id = ?) where t_re.status = 1 order by t_re.c_date desc', [openid])
       let allRecords = sortRecords(res[0])
-      data['records'] = allRecords.slice(idx, idx + pageSize)
+      let records = allRecords.slice(idx, idx + pageSize)
+      for (let red of records){
+        if (red.comm > 0) {
+          let commKey = `comm_${red.id}`
+          red.comments = JSON.parse(await cache.get(commKey))
+        }
+      }
+      data['records'] = records
       let avatars = []
       for (let record of allRecords){
         let avatar = record.avatar_url || ''
