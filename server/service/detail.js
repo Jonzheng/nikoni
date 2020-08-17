@@ -1,4 +1,5 @@
 const { mysql } = require('../config/db')
+const cache = require("../util/redis")
 
 exports = module.exports = {
   queryDetail: async (ctx) => {
@@ -15,7 +16,7 @@ exports = module.exports = {
         let records = res[0]
         for (let red of records){
           if (red.comm > 0) {
-            let commKey = `comm_${red.id}`
+            let commKey = `comm_${red.record_id}`
             red.comments = JSON.parse(await cache.get(commKey))
           }
         }
