@@ -33,7 +33,7 @@ exports = module.exports = {
     let { pageNo, pageSize, title, level } = body
     title = title ? title : ''
     pageNo = pageNo ? pageNo : 1
-    pageSize = pageSize ? pageSize : 10
+    pageSize = pageSize ? pageSize : 20
     let list = []
     let total = 0
     let names = []

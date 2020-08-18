@@ -33,11 +33,14 @@ const getVideoSize = (fileId) => {
       Prefix: fileId
     }, (err, data) => {
       if (err) {
-        console.log(err)
-        reject(err)
+        console.log('--getVideoSize srr:\n', err)
+        resolve(1)
       } else if(data["Contents"].length > 0) {
         let videoSize = data["Contents"][0].Size
         resolve(videoSize)
+      }else{
+        console.log('--not found:\n', data)
+        resolve(1)
       }
     })
   })
@@ -79,7 +82,7 @@ exports = module.exports = {
     let srcVideo = `${PreVideo}${fileId}.mp4`
 
     let videoSize = await getVideoSize(fileId)
-
+    // videoSize = 1
     await mysql('t_list').insert({
       file_id: fileId,
       src_video: srcVideo,
