@@ -67,7 +67,7 @@ exports = module.exports = {
   },
   publishAudio: async (ctx) => {
     let body = ctx.request.body
-    let { fileId, title, serifu, koner, roma, cv, stars, shadow } = body
+    let { fileId, title, serifu, koner, roma, cv, stars, shadow, audioType } = body
     let cName = title.split('_')[0]
     let flst = fileId.split("_") //["ssr", "xtz", "0", "1"]
     let level = flst[0]
@@ -78,7 +78,7 @@ exports = module.exports = {
 
     let avatar = `${PreAvatar}${level}_${sName}.png`
     let srcImage = `${PreImage}${level}_${sName}_0.png`
-    let srcAudio = `${PreAudio}${fileId}.mp3`
+    let srcAudio = `${PreAudio}${fileId}${audioType}`
     let srcVideo = `${PreVideo}${fileId}.mp4`
 
     let videoSize = await getVideoSize(fileId)

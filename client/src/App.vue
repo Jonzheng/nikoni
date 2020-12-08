@@ -23,6 +23,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.app-container{
+  margin-bottom: 160px;
+}
 .footer{
   padding: 10px 0;
   width: 100%;
