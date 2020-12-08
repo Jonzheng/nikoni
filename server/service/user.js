@@ -1,8 +1,28 @@
 const { mysql } = require('../config/db')
 const conf = require('../config/conf')
 const crypto = require('crypto')
-
 const request = require('../util/request')
+const cos = require('../util/qcos')
+
+const Region = 'ap-guangzhou'
+const BucketAvatar = 'avatar-1256378396'
+
+const uploadAvatar = (filename, filePath) => {
+  return new Promise((resolve, reject) =>{
+    cos.postObject({
+      Bucket: BucketAvatar,
+      Region: Region,
+      Key: filename,
+      FilePath: filePath
+    }, (err, data) => {
+      if (err){
+        reject(err)
+      }else{
+        resolve(data)
+      }
+    })
+  })
+}
 
 const getOpenid = (userCode) => {
   // url = 'https://job.xiyanghui.com/api/q1/json'
@@ -68,11 +88,15 @@ exports = module.exports = {
     ctx.body = data;
   },
   uploadAvatar: async (ctx) => {
+    let { openid } = body
     console.log(ctx.request.files)
     if (ctx.request.files){
-      let file = ctx.request.files[0]
-      console.log('typeof', typeof(file))
+      let file = ctx.request.files['avatar']
+      let filename = `${openid}.png`
+      let res = await uploadAvatar(filename, file.path)
+      console.log(res)
     }
+    ctx.body = 200;
   },
   login: async (ctx) => {
     let body = ctx.request.body
