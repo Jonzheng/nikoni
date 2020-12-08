@@ -41,7 +41,7 @@ cache.get = (key) => {
 };
 
 //字符串 设置键值对
-cache.set = (key, value)=>{
+cache.set = (key, value, expire=0)=>{
     if(typeof value === "object"){
         value = JSON.stringify(value);
     }
@@ -53,6 +53,9 @@ cache.set = (key, value)=>{
             }else{
                 if(result === "OK"){
                     result = true;
+                }
+                if (expire > 0) {
+                    redisClient.expire(key, expire)
                 }
                 resolve(result);
             }

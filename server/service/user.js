@@ -47,9 +47,8 @@ exports = module.exports = {
   },
   updateUser: async (ctx) => {
     let body = ctx.request.body
-    let { openid, nickName, showName, avatarUrl, gender, city, province, country } = body
-    showName = showName ? showName : ''
-    await mysql("t_user").where("openid", openid).update({ nick_name: nickName,show_name: showName, avatar_url: avatarUrl, gender: gender, city:city, province:province, country:country})
+    let { openid, nickName, avatarUrl, gender, city, province, country } = body
+    await mysql("t_user").where("openid", openid).update({ nick_name: nickName, avatar_url: avatarUrl, gender: gender, city:city, province:province, country:country})
     let data = await mysql('t_user').select('*').where('openid', openid)
     ctx.body = data;
   },
@@ -67,6 +66,13 @@ exports = module.exports = {
     await mysql("t_user").where("openid", openid).update({ avatar_url: avatarUrl })
     let data = await mysql('t_user').select('*').where('openid', openid)
     ctx.body = data;
+  },
+  uploadAvatar: async (ctx) => {
+    console.log(ctx.request.files)
+    if (ctx.request.files){
+      let file = ctx.request.files[0]
+      console.log('typeof', typeof(file))
+    }
   },
   login: async (ctx) => {
     let body = ctx.request.body

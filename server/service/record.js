@@ -135,5 +135,12 @@ exports = module.exports = {
     await mysql("t_record").where("record_id", recordId).andWhere('master_id', masterId).delete()
     await mysql("t_heart").where("record_id", recordId).delete()
     ctx.body = 200
+  },
+  report: async (ctx) => {
+    let body = ctx.request.body
+    let { key, value } = body
+    key = `niko_${key}`
+    await cache.set(key, value, 3600 * 60)
+    ctx.body = 200
   }
 }
