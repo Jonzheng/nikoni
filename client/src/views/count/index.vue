@@ -26,14 +26,14 @@
         label="单价"
         width="220">
         <template scope="scope">
-          <el-input size="small" v-model="scope.row.price" type="number" placeholder="请输入价格" @blur="blur()"></el-input>
+          <el-input size="small" v-model="scope.row.price" type="number" placeholder="请输入价格" @blur="blur(scope.$index, scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column
         label="数量"
         width="220">
         <template scope="scope">
-          <el-input size="small" v-model="scope.row.num" type="number" placeholder="请输入数量" @blur="blur()"></el-input>
+          <el-input size="small" v-model="scope.row.num" type="number" placeholder="请输入数量" @blur="blur(scope.$index, scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -112,12 +112,12 @@ export default {
   computed: {
     floor: function () {
       let items = this.items
-      let f = sum(items.map(it => it.price * it.num))
+      let f = sum(items.map(it => Number(it.price) * Number(it.num)))
       return Math.round(f * 100) / 100
     },
     ceil: function () {
       let items = this.items
-      let c = sum(items.map(it => it.price * (it.num + range)))
+      let c = sum(items.map(it => Number(it.price) * (Number(it.num) + range)))
       return Math.round(c * 100) / 100
     },
   },
@@ -128,17 +128,21 @@ export default {
     init() {
       this._step = 0
     },
-    blur() {
+    blur(index, row) {
+      if (!row) return;
+      console.log(index, row)
+      this.items[index].price = Math.round(row.price * 100) / 100
+      this.items[index].num = Math.round(row.num * 100) / 100
       let items = this.items
       let f = sum(items.map(it => it.price * it.num))
       let c = sum(items.map(it => it.price * (it.num + range)))
-      console.log(Math.round(f * 100) / 100, Math.round(c * 100) / 100)
+      console.log(Math.round(f * 100) / 100, Math.round(c * 100) / 100, items)
     },
     handleCurrentChange(row, event, column) {
-      console.log(event)
+      // console.log(event)
     },
     handleEdit(index, row) {
-      console.log(index, row);
+      // console.log(index, row);
       this.items[index].input = true
     },
     handleDelete(index, row) {
@@ -164,11 +168,10 @@ export default {
       }, 100)
     },
     compute(){
-      console.log(this.countLock)
       let { total, items, arr } = this
       total = Number(total)
       let spends = sum(items.map(it => it.price * it.num))
-      console.log(spends<total, spends,'<', total)
+      // console.log(spends<total, spends,'<', total)
       if (total < spends) {
         this.$message.error('数值不在范围内');
         this.countLock = false
@@ -181,7 +184,6 @@ export default {
         let num = Number(it.num)
         let top = num + range
         let sin = []
-        console.log(it)
         while (num < top) {
           let spend = Math.round(price * num * 100) / 100
           let vv = { name, price, num, spend }
@@ -214,8 +216,10 @@ export default {
           mp[sp].push(ss)
         }
       }
+      console.log('--所有价格结果--')
+      console.log(mp)
+      console.log('==========')
       _arr = mp[total] || []
-      console.log(_arr)
       this.next()
       this.countLock = false
       this.$message({
