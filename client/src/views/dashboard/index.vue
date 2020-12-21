@@ -337,15 +337,14 @@ export default {
       let sp = fileId.split('_')
       let ln = `${sp[0]}_${sp[1]}_0.png`
       this.skCover = PreAudio.replace('audio','image') + ln
-      console.log(this.skCover)
+      // console.log(this.skCover)
       request.open('GET', srcAudio, true)
       // request.setRequestHeader('Accept','text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
       // request.setRequestHeader('Content-Type','audio/mp3')
       request.responseType = 'arraybuffer';
-
       // 下面就是对音频文件的异步解析
       request.onload = (ret) => {
-        if (ret.target.status == 404){
+        if ( request.status == 404 && suffix != '.wav' ){
           this.handleEdit(index, row, '.wav')
           return;
         }
