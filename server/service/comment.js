@@ -67,7 +67,9 @@ exports = module.exports = {
   saveChat: async (ctx) => {
     let body = ctx.request.body
     let { userId, fileId, masterId, content, reId, reName, reContent } = body
-    let recordId = `${masterId}_to_${userId}`
+    let arr =  [ masterId, userId ]
+    arr.sort()
+    let recordId = arr.join('_and_')
     let likeStr = `%${userId}%`
     reId = reId ? reId : ''
     reName = reName ? reName : ''
