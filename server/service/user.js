@@ -3,17 +3,19 @@ const conf = require('../config/conf')
 const crypto = require('crypto')
 const request = require('../util/request')
 const cos = require('../util/qcos')
+const fs = require('fs')
+const cache = require("../util/redis")
 
 const Region = 'ap-guangzhou'
 const BucketAvatar = 'avatar-1256378396'
 
 const uploadAvatar = (filename, filePath) => {
   return new Promise((resolve, reject) =>{
-    cos.postObject({
+    cos.putObject({
       Bucket: BucketAvatar,
       Region: Region,
       Key: filename,
-      FilePath: filePath
+      Body: filePath,
     }, (err, data) => {
       if (err){
         reject(err)
@@ -46,11 +48,15 @@ exports = module.exports = {
     openid = openid ? openid : '001'
     await mysql.raw('insert into t_user(openid, c_date) values (?,now())on duplicate key update latest_date = now()', openid);
     let data = await mysql('t_user').select('*').where('openid', openid)
+    let date = new Date()
+    let key = `uv_${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`
+    await cache.sadd(key, openid, 3600 * 7)
     ctx.body = data;
   },
   getUser: async (ctx) => {
     let body = ctx.request.body
     let { openid, mineId } = body
+    openid = openid ? openid : '404'
     let res = await mysql('t_user').select('*').where('openid', openid)
     let heart = await mysql('t_heart').select('user_id').where('master_id', openid).andWhere('status', 1)
     let user = res[0]
@@ -63,12 +69,18 @@ exports = module.exports = {
     user['followCount'] = follows.length
     user['fansCount'] = fans.length
     user['isFollow'] = fans.filter((item) => {return item.openid == mineId}).length > 0
+    let date = new Date()
+    let key = `uv_${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`
+    user.nikoUv = await cache.scard(key)
     ctx.body = user;
   },
   updateUser: async (ctx) => {
     let body = ctx.request.body
     let { openid, nickName, avatarUrl, gender, city, province, country } = body
-    await mysql("t_user").where("openid", openid).update({ nick_name: nickName, avatar_url: avatarUrl, gender: gender, city:city, province:province, country:country})
+    let res = await mysql('t_user').select('*').where('openid', openid)
+    if(res && res[0] && !res[0].avatar_url){
+      await mysql("t_user").where("openid", openid).update({ nick_name: nickName, avatar_url: avatarUrl, gender: gender, city:city, province:province, country:country})
+    }
     let data = await mysql('t_user').select('*').where('openid', openid)
     ctx.body = data;
   },
@@ -88,15 +100,23 @@ exports = module.exports = {
     ctx.body = data;
   },
   uploadAvatar: async (ctx) => {
-    let { openid } = body
-    console.log(ctx.request.files)
-    if (ctx.request.files){
-      let file = ctx.request.files['avatar']
+    let { openid } = ctx.request.body
+    let files = ctx.request.files
+    let data = ''
+    if (files){
+      let file = files['avatar']
       let filename = `${openid}.png`
-      let res = await uploadAvatar(filename, file.path)
-      console.log(res)
+      let fileStream = fs.createReadStream(file.path);
+      let res = await uploadAvatar(filename, fileStream).then(async ret=>{
+        if (ret && ret.Location){
+          let t = new Date().getTime()
+          let avatarUrl = `https://${ret.Location}?t=${t}&imageView2/1/w/120/h/120`
+          await mysql("t_user").where("openid", openid).update({ avatar_url: avatarUrl })
+          data = avatarUrl
+        }
+      })
     }
-    ctx.body = 200;
+    ctx.body = data;
   },
   login: async (ctx) => {
     let body = ctx.request.body

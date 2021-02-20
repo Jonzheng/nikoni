@@ -12,9 +12,9 @@ redisClient.on("error", function(err){
 });
 
 // monitor事件可以监听到redis接收到的所有客户端命令
-redisClient.monitor(function(err, res){
-    console.log("redis client monitor: ", res);//ok
-});
+// redisClient.monitor(function(err, res){
+//     console.log("redis client monitor: ", res);//ok
+// });
 
 redisClient.on("monitor", function(time, args){
   if (args.length > 1 ){
@@ -114,5 +114,33 @@ cache.hmget = (key, values)=>{
        });
     });
 };
+
+cache.sadd = (key, value, expire=0)=>{
+    return new Promise((resolve, reject)=>{
+       redisClient.sadd(key, value, (error, result)=>{
+           if(error){
+               reject(error);
+           }else{
+              if (expire>0) {
+                redisClient.expire(key, expire)
+              }
+              resolve(result);
+           }
+       });
+    });
+};
+
+cache.scard = (key)=>{
+    return new Promise((resolve, reject)=>{
+       redisClient.scard(key, (error, result)=>{
+            if(error){
+                reject(error);
+            }else{
+                resolve(result);
+            }
+       });
+    });
+};
+
 module.exports = cache;
 

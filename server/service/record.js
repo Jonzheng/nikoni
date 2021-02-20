@@ -140,7 +140,7 @@ exports = module.exports = {
     let body = ctx.request.body
     let { key, value } = body
     key = `niko_${key}`
-    await cache.set(key, value, 3600 * 60)
+    await cache.set(key, value, 3600 * 30)
     ctx.body = 200
   }
 }
