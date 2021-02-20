@@ -60,7 +60,7 @@ exports = module.exports = {
     let body = ctx.request.body
     let { userId, masterId } = body
     let recordId = `${masterId}_to_${userId}`
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
     let comments = res[0]
     ctx.body = comments
   },
@@ -85,7 +85,7 @@ exports = module.exports = {
     let { commId, userId, masterId } = body
     let recordId = `${masterId}_to_${userId}`
     await mysql('t_comment').where('id', commId).andWhere('user_id', userId).delete()
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
     let comments = res[0]
     ctx.body = comments
   },
