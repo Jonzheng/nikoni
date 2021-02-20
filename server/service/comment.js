@@ -60,7 +60,7 @@ exports = module.exports = {
     let body = ctx.request.body
     let { recordId, userId, masterId } = body
     recordId = 'chat'
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid,tz.user_id as zid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ? and t_cm.user_id = ? and t_cm.master_id = ?', [recordId, userId, masterId])
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ? and t_cm.user_id = ? and t_cm.master_id = ?', [recordId, userId, masterId])
     let comments = res[0]
     ctx.body = comments
   },
@@ -75,7 +75,7 @@ exports = module.exports = {
     if(userId != masterId){
       await mysql("t_user").where("openid", userId).increment({ news: 1 })
     }
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid,tz.user_id as zid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) left join t_zan tz on (t_cm.id=tz.comm_id and tz.status=1 and tz.user_id = ?) where t_cm.record_id = ? order by t_cm.c_date desc', [userId, recordId])
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ? order by t_cm.c_date desc', [userId, recordId])
     let comments = res[0]
     ctx.body = comments
   },
@@ -83,7 +83,7 @@ exports = module.exports = {
     let body = ctx.request.body
     let { recordId, commId, userId } = body
     await mysql('t_comment').where('id', commId).andWhere('user_id', userId).delete()
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid,tz.user_id as zid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) left join t_zan tz on (t_cm.id=tz.comm_id and tz.status=1 and tz.user_id = ?) where t_cm.record_id = ? order by t_cm.c_date desc', [userId, recordId])
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ? order by t_cm.c_date desc', [userId, recordId])
     let comments = res[0]
     ctx.body = comments
   },
