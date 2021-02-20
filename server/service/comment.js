@@ -58,9 +58,9 @@ exports = module.exports = {
   },
   queryChat: async (ctx) => {
     let body = ctx.request.body
-    let { recordId, userId, masterId } = body
-    recordId = 'chat'
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ? and t_cm.user_id = ? and t_cm.master_id = ?', [recordId, userId, masterId])
+    let { userId, masterId } = body
+    let recordId = `${masterId}_to_${userId}`
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
     let comments = res[0]
     ctx.body = comments
   },
@@ -75,8 +75,8 @@ exports = module.exports = {
     if(userId != masterId){
       await mysql("t_user").where("openid", userId).increment({ news: 1 })
     }
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ? order by t_cm.c_date desc', [userId, recordId])
-    let comments = res[0]
+    recordId = `${masterId}_to_${userId}`
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.user_id = t_ur.openid) where t_cm.record_id = ?', [recordId])    let comments = res[0]
     ctx.body = comments
   },
   deleteMessage: async (ctx) => {

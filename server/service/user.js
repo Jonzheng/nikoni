@@ -194,7 +194,7 @@ exports = module.exports = {
     resHeart = resHeart[0]
     let resComment = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tc.record_id,tc.file_id,tc.content, unix_timestamp(tc.c_date) as times, tc.c_date, 'comment' as type from t_comment tc LEFT JOIN t_user tur on (tc.user_id = tur.openid) LEFT JOIN t_comment tc2 on (tc.re_id = tc2.id) WHERE tc.status = 1 and tc.file_id != 'chat' and tc.user_id != ? and (tc.master_id = ? or tc2.user_id = ?) ORDER BY tc.c_date desc limit 0,50`, [openid, openid, openid]);
     resComment = resComment[0]
-    let resChat = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tc.record_id,tc.file_id,tc.content, unix_timestamp(tc.c_date) as times, tc.c_date, 'chat' as type from t_comment tc LEFT JOIN t_user tur on (tc.master_id = tur.openid) WHERE tc.status = 1 and tc.user_id = ? and tc.record_id = ? ORDER BY tc.c_date desc limit 0,50`, [openid, 'chat']);
+    let resChat = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tc.record_id,tc.file_id,tc.content, unix_timestamp(tc.c_date) as times, tc.c_date, 'chat' as type from t_comment tc LEFT JOIN t_user tur on (tc.master_id = tur.openid) WHERE tc.status = 1 and tc.user_id = ? and tc.file_id = ? ORDER BY tc.c_date desc limit 0,50`, [openid, 'chat']);
     resChat = resChat[0]
     let resFans = await mysql.raw(`select tur.openid,tur.nick_name,tur.show_name,tur.motto,tur.avatar_url,tf.c_date,unix_timestamp(tf.c_date) as times, 'fans' as type FROM t_follow tf LEFT JOIN t_user tur on (tf.openid = tur.openid) where tf.status != 0 and tf.follow_id = ? ORDER BY tf.c_date desc limit 0,50`, openid);
     resFans = resFans[0]
