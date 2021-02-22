@@ -59,18 +59,17 @@ exports = module.exports = {
   queryChat: async (ctx) => {
     let body = ctx.request.body
     let { userId, masterId } = body
-    let likeStr = `%${userId}%`
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id like ?', [likeStr])
+    let arr =  [ masterId, userId ].sort()
+    let recordId = arr.join('_and_')
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
     let comments = res[0]
     ctx.body = comments
   },
   saveChat: async (ctx) => {
     let body = ctx.request.body
     let { userId, fileId, masterId, content, reId, reName, reContent } = body
-    let arr =  [ masterId, userId ]
-    arr.sort()
+    let arr =  [ masterId, userId ].sort()
     let recordId = arr.join('_and_')
-    let likeStr = `%${userId}%`
     reId = reId ? reId : ''
     reName = reName ? reName : ''
     reContent = reContent ?  reContent : ''
@@ -79,16 +78,17 @@ exports = module.exports = {
     if(userId != masterId){
       await mysql("t_user").where("openid", userId).increment({ news: 1 })
     }
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id like ?', [likeStr])
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
     let comments = res[0]
     ctx.body = comments
   },
   deleteMessage: async (ctx) => {
     let body = ctx.request.body
     let { commId, userId, masterId } = body
-    let likeStr = `%${userId}%`
+    let arr =  [ masterId, userId ].sort()
+    let recordId = arr.join('_and_')
     await mysql('t_comment').where('id', commId).andWhere('user_id', userId).delete()
-    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id like ?', [likeStr])
+    let res = await mysql.raw('select t_cm.*,t_ur.show_name,t_ur.nick_name,t_ur.avatar_url,t_ur.openid from t_comment t_cm inner join t_user t_ur on (t_cm.master_id = t_ur.openid) where t_cm.record_id = ?', [recordId])
     let comments = res[0]
     ctx.body = comments
   },
