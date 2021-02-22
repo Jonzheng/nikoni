@@ -22,14 +22,14 @@ exports = module.exports = {
     let id = fileId + new Date().getTime()
     await mysql.raw('insert t_comment (id,record_id,user_id,file_id,master_id,content,re_id,re_name,re_content) values(?,?,?,?,?,?,?,?,?)on duplicate key update status = 1', [id, recordId, userId, fileId, masterId,content,reId,reName,reContent]);
     await mysql("t_record").where("record_id", recordId).increment({ comm: 1 })
-    if(userId != masterId){
+    if(userId != masterId && content !='@@::@@'){
       await mysql("t_user").where("openid", masterId).increment({ news: 1 })
     }
     if (reId) {
       let tc = await mysql("t_comment").select('user_id').where("id", reId)
       if (tc.length > 0){
         let reopid = tc[0].user_id
-        if (reopid != userId)
+        if (reopid != userId && content !='@@::@@')
         await mysql("t_user").where("openid", reopid).increment({ news: 1 })
       }
     }
